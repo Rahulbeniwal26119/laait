@@ -48,9 +48,34 @@ func (l *Lexer) NextToken() token.Token{
     case 0:
         tok.Literal = ""
         tok.Type = token.FILEEND
+    default:
+        if isLetter(l.ch){
+            tok.Literal = l.readIdentifier()
+            return to;
+        }
+        else{
+            tok = newToken(token.ILLEGAL, l.ch)
+        }
     }
     l.readChar()
     return tok
+}
+
+// readNoun function reads the indentifier or nouns until, It encounter an non-letter-character
+
+func (l *Lexer) readNoun() string {
+    position := l.position 
+    for isLetter(l.ch){
+        l.readChar()
+    }
+    return l.input[position:l.position]
+}
+
+// Decide which character are allowed as identifier name, use either ! or ?, 
+// but i am planning ! for factorial function in uncoming code 
+
+func isLetter(ch byte) bool {
+    return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch == '$'
 }
 
 func newToken(tokenType token.TokenType, ch byte) token.Token{

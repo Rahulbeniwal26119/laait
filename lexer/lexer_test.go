@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"laait/token"
+    "laait/lexer"
 	"testing"
 )
 
@@ -22,7 +23,7 @@ func TestNextToken(t *testing.T) {
 		{token.SEMICOLON, ";"},
 		{token.FILEEND, ""},
 	}
-	l := New(input)
+	l := lexer.New(input)
 	for i, tt := range tests {
 		tok := l.NextToken()
 
