@@ -38,3 +38,56 @@ func TestNextToken(t *testing.T) {
 		}
 	}
 }
+
+Func TestNextToken(t *testing.T){
+    input := `
+    mini five = 5;
+    mini ten = 10;
+    mini add = fn(x,y){
+        x + y;
+    };
+    mini result = add(five, ten);
+    `
+    tests := []struct{
+        expectedType token.TokenType
+        expectedLiteral string
+    }{
+        {token.MINI, "mini"},
+        {token.NOUN, "five"},
+        {token.ASSIGN, "="},
+        {token.INT, "5"},
+        {token.SEMICOLON, ";"},
+        {token.MINI, "let"},
+        {token.NOUN, "ten"},
+        {token.ASSIGN, "="}
+        {token.INT, "10"},
+        {token.SEMICOLON, ";"},
+        {token.MINI, "mini"},
+        {token.NOUN, "add"},
+        {token.ASSIGN, "="},
+        {token.FUNCTION, "fn"},
+        {token.LTPAREN, "("},
+        {token.NOUN, "x"},
+        {token.COMMA, ","},
+        {token.NOUN, "y"},
+        {token.RTPAREN, ")"},
+        {token.LTBRACE, "{"},
+        {token.NOUN, "x"},
+        {token.PLUS, "+"},
+        {token.NOUN, "y"},
+        {token.SEMICOLON, ";"},
+        {token.RTBRACE, "}"},
+        {token.SEMICOLON, ";"},
+        {token.MINI, "mini"},
+        {token.NOUN, "result"},
+        {token.ASSIGN, "="},
+        {token.NOUN, "add"},
+        {token.LTPAREN, "("},
+        {token.NOUN, "five"},
+        {token.COMMA, ","},
+        {token.NOUN, "ten"},
+        {token.RTPAREN, ")"},
+        {token.SEMICOLON, ";"},
+        {token.FILEEND, ""}
+    }
+}
