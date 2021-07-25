@@ -56,5 +56,19 @@ const (
 
 	// Keywords
 	FUNCTION = "FUNCTION"
+	LET      = "LET"
 	MINI     = "MINI" // Mini is same as let for binding
 )
+
+var keywords = map[string]TokenType{
+	"fn":   FUNCTION,
+	"let":  LET,
+	"mini": MINI,
+}
+
+func LookupNoun(noun string) TokenType {
+	if tok, ok := keywords[noun]; ok {
+		return tok
+	}
+	return NOUN
+}
