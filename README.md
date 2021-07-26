@@ -1,2 +1,4 @@
 # laait
-LAAIT Programming Langauge, Final Year Project 
+LAAIT Programming Langauge
+
+Written in Go
