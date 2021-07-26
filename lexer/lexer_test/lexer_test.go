@@ -15,6 +15,10 @@ func TestNextToken(t *testing.T) {
         x + y;
     };
     mini result = add(five, ten);
+    !-/*5;
+    5 < 10 > 5;
+	10 == 10
+	10 != 9
     `
 
 	// var Token struct {
@@ -77,6 +81,24 @@ func TestNextToken(t *testing.T) {
 		{token.NOUN, "ten"},
 		{token.RTPAREN, ")"},
 		{token.SEMICOLON, ";"},
+		{token.BANG, "!"},
+		{token.MINUS, "-"},
+		{token.SLASH, "/"},
+		{token.ASTERISK, "*"},
+		{token.INT, "5"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "5"},
+		{token.LT, "<"},
+		{token.INT, "10"},
+		{token.GT, ">"},
+		{token.INT, "5"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "10"},
+		{token.EQ, "=="},
+		{token.INT, "10"},
+		{token.INT, "10"},
+		{token.NOT_EQ, "!="},
+		{token.INT, "9"},
 		{token.FILEEND, ""},
 	}
 
