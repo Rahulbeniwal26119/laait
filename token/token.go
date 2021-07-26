@@ -42,8 +42,18 @@ const (
 	INT  = "INT"
 
 	// Operators
-	ASSIGN = "="
-	PLUS   = "+"
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	BANG     = "!"
+	ASTERISK = "*"
+	SLASH    = "/"
+
+	LT = "<"
+	GT = ">"
+
+    EQ = "=="
+    NOT_EQ = "!="
 
 	// Delimiters
 	COMMA     = ","
@@ -58,12 +68,22 @@ const (
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
 	MINI     = "MINI" // Mini is same as let for binding
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
 
 var keywords = map[string]TokenType{
-	"fn":   FUNCTION,
-	"let":  LET,
-	"mini": MINI,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"mini":   MINI,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 func LookupNoun(noun string) TokenType {
