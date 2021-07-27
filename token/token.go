@@ -67,7 +67,7 @@ const (
 	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
-	MINI     = "MINI" // Mini is same as let for binding
+	BIND     = "BIND" // bind is same as let for binding
 	TRUE     = "TRUE"
 	FALSE    = "FALSE"
 	IF       = "IF"
@@ -80,7 +80,7 @@ const (
 var keywords = map[string]TokenType{
 	"fn":     FUNCTION,
 	"let":    LET,
-	"mini":   MINI,
+	"bind":   BIND,
 	"true":   TRUE,
 	"false":  FALSE,
 	"if":     IF,
