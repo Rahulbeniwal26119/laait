@@ -9,12 +9,12 @@ import (
 func TestNextToken(t *testing.T) {
 	input1 := `=+(){},;`
 	input2 := `
-    mini five = 5;
-    mini ten = 10;
-    mini add = fn(x,y){
+    bind five = 5;
+    bind ten = 10;
+    bind add = fn(x,y){
         x + y;
     };
-    mini result = add(five, ten);
+    bind result = add(five, ten);
     !-/*5;
     5 < 10 > 5;
 	10 == 10
@@ -45,17 +45,17 @@ func TestNextToken(t *testing.T) {
 		expectedType    token.TokenType
 		expectedLiteral string
 	}{
-		{token.MINI, "mini"},
+		{token.BIND, "bind"},
 		{token.NOUN, "five"},
 		{token.ASSIGN, "="},
 		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
-		{token.MINI, "mini"},
+		{token.BIND, "bind"},
 		{token.NOUN, "ten"},
 		{token.ASSIGN, "="},
 		{token.INT, "10"},
 		{token.SEMICOLON, ";"},
-		{token.MINI, "mini"},
+		{token.BIND, "bind"},
 		{token.NOUN, "add"},
 		{token.ASSIGN, "="},
 		{token.FUNCTION, "fn"},
@@ -71,7 +71,7 @@ func TestNextToken(t *testing.T) {
 		{token.SEMICOLON, ";"},
 		{token.RTBRACE, "}"},
 		{token.SEMICOLON, ";"},
-		{token.MINI, "mini"},
+		{token.BIND, "bind"},
 		{token.NOUN, "result"},
 		{token.ASSIGN, "="},
 		{token.NOUN, "add"},
