@@ -11,13 +11,14 @@ import (
 func TestLetStatements(t *testing.T) {
 	input := `
     let x = 5;
-    bind  y = 10;
+    let  = 10;
     let  foobar = 1221221;
     `
 	l := lexer.New(input)
 	p := parser.New(l)
 
 	program := p.ParseProgram()
+	checkParserErrors(t, p) // Check the error in the syntax
 	if program == nil {
 		t.Fatalf("Parse Program( returned nil)")
 	}
@@ -63,4 +64,17 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 		return false
 	}
 	return true
+}
+
+func checkParserErrors(t *testing.T, p *parser.Parser) {
+	errors := p.Errors()
+	if len(errors) == 0 {
+		return
+	}
+
+	t.Errorf("parser has %d errors", len(errors))
+	for _, msg := range errors {
+		t.Errorf("parser error: %q", msg)
+	}
+	t.FailNow()
 }
