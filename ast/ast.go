@@ -1,6 +1,6 @@
 package ast
 
-import "go/token"
+import "laait/token"
 
 type Node interface {
 	TokenLiteral() string
@@ -31,7 +31,7 @@ type Program struct {
 	Statements []Statement
 }
 
-func (ls *LetStatement) statementNode() {}
+func (ls *LetStatement) statementNode()       {}
 func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
 
 func (*Identifier) expressionNode()        {}
