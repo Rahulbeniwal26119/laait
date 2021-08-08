@@ -48,6 +48,7 @@ const (
 	BANG     = "!"
 	ASTERISK = "*"
 	SLASH    = "/"
+    QUOTE    = "\""
 
 	LT = "<"
 	GT = ">"
