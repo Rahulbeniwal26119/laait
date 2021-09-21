@@ -1,5 +1,5 @@
 /* LAAIT (pronounce same as lite) Programming Language
-   It is C like syntax interpreted, language contains
+   It has C like syntax, interpreted, language contains
 
    --- Lower Level Features --
    Integer and Booleans
@@ -25,7 +25,8 @@
 package token
 
 type TokenType string /* TokenType is a string type  which helps us in debugging and
-   in making difference between them*/
+   in making difference between them
+   TokenType String allow us to represent as many different type of Tokens*/
 
 type Token struct {
 	Type    TokenType
@@ -48,7 +49,7 @@ const (
 	BANG     = "!"
 	ASTERISK = "*"
 	SLASH    = "/"
-    QUOTE    = "\""
+	QUOTE    = "\""
 
 	LT = "<"
 	GT = ">"
