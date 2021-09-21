@@ -1,12 +1,16 @@
 package lexer
 
-import "laait/token"
+import (
+	"laait/token"
+	"unicode"
+	"unicode/utf8"
+)
 
 type Lexer struct {
 	input        string
 	position     int
 	readPosition int
-	ch           byte
+	ch           rune
 }
 
 func New(input string) *Lexer {
@@ -16,10 +20,11 @@ func New(input string) *Lexer {
 }
 
 func (l *Lexer) readChar() {
-	if l.readPosition >= len(l.input) {
+	if l.readPosition >= utf8.RuneCountInString(l.input) {
 		l.ch = 0
 	} else {
-		l.ch = l.input[l.readPosition]
+		// writing to support UTF-8 characters
+		l.ch = []rune(l.input)[l.readPosition]
 	}
 	l.position = l.readPosition
 	l.readPosition += 1
@@ -74,11 +79,11 @@ func (l *Lexer) NextToken() token.Token {
 		tok.Literal = ""
 		tok.Type = token.FILEEND
 	default:
-		if isLetter(l.ch) {
+		if unicode.IsLetter(l.ch) {
 			tok.Literal = l.readNoun()
 			tok.Type = token.LookupNoun(tok.Literal)
 			return tok
-		} else if isDigit(l.ch) { // handle the interger numbers
+		} else if unicode.IsDigit(l.ch) { // handle the interger numbers
 			tok.Type = token.INT
 			tok.Literal = l.readNumber()
 			return tok
@@ -93,22 +98,17 @@ func (l *Lexer) NextToken() token.Token {
 // read the integer literal
 func (l *Lexer) readNumber() string {
 	position := l.position
-	for isDigit(l.ch) {
+	for unicode.IsDigit(l.ch) {
 		l.readChar()
 	}
 	return l.input[position:l.position]
-}
-
-// check if the number is the digit
-func isDigit(ch byte) bool {
-	return '0' <= ch && ch <= '9'
 }
 
 // readNoun function reads the indentifier or nouns until, It encounter an non-letter-character
 
 func (l *Lexer) readNoun() string {
 	position := l.position
-	for isLetter(l.ch) {
+	for unicode.IsLetter(l.ch) {
 		l.readChar()
 	}
 	return l.input[position:l.position]
@@ -117,12 +117,8 @@ func (l *Lexer) readNoun() string {
 // Decide which character are allowed as identifier name, use either ! or ?,
 // but i am planning ! for factorial function in uncoming code
 
-func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch == '$'
-}
-
 // return the new token
-func newToken(tokenType token.TokenType, ch byte) token.Token {
+func newToken(tokenType token.TokenType, ch rune) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
