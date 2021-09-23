@@ -7,11 +7,20 @@ import (
 	"laait/token"
 )
 
+type (
+	prefixParseFunction func() ast.Expression
+	infixParseFunction  func(ast.Expression) ast.Expression
+)
+
 type Parser struct {
-	l         *lexer.Lexer
-	curToken  token.Token
-	peekToken token.Token
-	errors    []string
+	l         *lexer.Lexer // lexme
+	curToken  token.Token  // current token
+	peekToken token.Token  // next token
+	errors    []string     // any error
+
+	// tracker of operators
+	prefixParseFns map[token.TokenType]prefixParseFunction
+	infixParseFns  map[token.TokenType]infixParseFunction
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -58,8 +67,8 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseLetStatement()
 	case token.BIND:
 		return p.parseLetStatement()
-    case token.RETURN:
-        return p.parseReturnStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()
 	default:
 		return nil
 	}
@@ -85,15 +94,15 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	return stmt
 }
 
-func (p *Parser)parseReturnStatement() *ast.ReturnStatement{
-    stmt := &ast.ReturnStatement{Token : p.curToken}
-    p.nextToken()
-    
-    for !p.curTokenIs(token.SEMICOLON){
-        p.nextToken()
-    }
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	stmt := &ast.ReturnStatement{Token: p.curToken}
+	p.nextToken()
 
-    return stmt
+	for !p.curTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
 }
 
 func (p *Parser) curTokenIs(t token.TokenType) bool {
@@ -112,4 +121,12 @@ func (p *Parser) expectedPeek(t token.TokenType) bool {
 		p.peekError(t)
 		return false
 	}
+}
+
+func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFunction) {
+	p.prefixParseFns[tokenType] = fn
+}
+
+func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFunction) {
+	p.infixParseFns[tokenType] = fn
 }
