@@ -40,6 +40,15 @@ type Program struct {
 	Statements []Statement
 }
 
+type IntegerLiteral struct {
+	Token token.Token
+	Value int64
+}
+
+func (il *IntegerLiteral) expressionNode()      {}
+func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
+func (il *IntegerLiteral) String() string       { return il.Token.Literal }
+
 func (i *Identifier) String() string { return i.Value }
 
 // implementing String for Program
@@ -80,18 +89,18 @@ func (rs *ReturnStatement) String() string {
 	return out.String()
 }
 
+// complex statement expression
+type ExpressionStatement struct {
+	Token      token.Token // each instruction has atleast one expression
+	Expression Expression
+}
+
 func (es *ExpressionStatement) String() string {
 	if es.Expression != nil {
 		return es.Expression.String()
 	}
 
 	return ""
-}
-
-// complex statement expression
-type ExpressionStatement struct {
-	Token      token.Token // each instruction has atleast one expression
-	Expression Expression
 }
 
 func (es *ExpressionStatement) statementNode()       {}
