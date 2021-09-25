@@ -1,4 +1,5 @@
 # laait
-LAAIT Programming Langauge
+LAAIT Programming Interpreter
+
 
 Written in Go
