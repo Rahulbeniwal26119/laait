@@ -232,6 +232,36 @@ func TestParsingPrefixExpression(t *testing.T) {
 	}
 }
 
+func TestBooleanExpression(t *testing.T) {
+	input := "false;"
+
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	if len(program.Statements) != 1 {
+		t.Fatalf("Program has not enough statements. got=%d", len(program.Statements))
+	}
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not a ast.ExpressionStatement. got %T", program.Statements[0])
+	}
+
+	literal, ok := stmt.Expression.(*ast.Boolean)
+	if !ok {
+		t.Fatalf("exp not *ast.Identifier. got=%T", stmt.Expression)
+	}
+
+	if literal.Value != false {
+		t.Errorf("literal.Value not %t. got = %t", false, literal.Value)
+	}
+
+	if literal.TokenLiteral() != "false" {
+		t.Errorf("literal.TokenLiteral not %s. got %s", "false", literal.TokenLiteral())
+	}
+}
+
 func TestParsingInfixExpressions(t *testing.T) {
 	infixTest := []struct {
 		input      string
