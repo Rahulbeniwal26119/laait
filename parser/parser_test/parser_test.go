@@ -502,3 +502,49 @@ func testInfixExpression(t *testing.T, exp ast.Expression, left interface{},
 
 	return true
 }
+
+func TestIfExpression(t *testing.T) {
+	input := `if ( x < y) {x}`
+
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("program.Body does not contain %d statements. got=%d\n", 1, len(program.Statements))
+	}
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
+	}
+
+	exp, ok := stmt.Expression.(*ast.IfExpression)
+	if !ok {
+		t.Fatalf("stmt.Expression is not ast.IfExpression. got=%T",
+			stmt.Expression)
+	}
+
+	if !testInfixExpression(t, exp.Condition, "x", "<", "y") {
+		return
+	}
+
+	if len(exp.Effect.Statements) != 1 {
+		t.Errorf("Effect is not 1 statements, got = %d\n", len(exp.Effect.Statements))
+
+	}
+
+	effect, ok := exp.Effect.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
+	}
+
+	if !testIdentifier(t, effect.Expression, "x") {
+		return
+	}
+
+	if exp.Optional != nil {
+		t.Errorf("exp.Optional.Statement is was not nil. gor=%+v", exp.Optional)
+	}
+}
