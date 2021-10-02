@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"laait/repl"
+	"laait/repl/evaluator"
 	"laait/repl/laait_parser"
 	"os"
 	"os/user"
@@ -11,10 +12,10 @@ import (
 func main() {
 	printUser()
 	if len(os.Args) < 2 {
-		lexer()
+		evalutor()
 	} else {
 		cmd := os.Args[1]
-		if cmd == "lexer" {
+		if cmd == "lexer" || cmd == "token" {
 			lexer()
 		} else if cmd == "parser" {
 			parser()
@@ -33,19 +34,28 @@ func printUser() {
 }
 
 func parser() {
-	fmt.Println(" ____        ")
-	fmt.Println("|  _ \\ __ _ _ __ ___  ___ _ __ ")
-	fmt.Println("| |_) / _` | '__/ __|/ _ \\ '__|")
-	fmt.Println("|  __/ (_| | |  \\__ \\  __/ |  ")
-	fmt.Println("|_|   \\__,_|_|  |___/\\___|_|  ")
+	fmt.Println(" ____                                     ")
+	fmt.Println("|  _ \\    __ _   _ __   ___    ___   _ __")
+	fmt.Println("| |_) |  / _` | | '__| / __|  / _ \\ | '__|")
+	fmt.Println("|  __/  | (_| | | |    \\__ \\ |  __/ | |")
+	fmt.Println("|_|      \\__,_| |_|    |___/  \\___| |_|")
 	laait_parser.Parser_Start(os.Stdin, os.Stdout)
 }
 
 func lexer() {
-	fmt.Println(" _____     _      ")
-	fmt.Println("|_   _|__ | | _____ _ __  ___ ")
-	fmt.Println("  | |/ _ \\| |/ / _ \\ '_ \\/ __|")
-	fmt.Println("  | | (_) |   <  __/ | | \\__ \\")
-	fmt.Println("  |_|\\___/|_|\\_\\___|_| |_|___/")
+	fmt.Println(" _____           _")
+	fmt.Println("|_   _|   ___   | | __   ___   _ __")
+	fmt.Println("  | |    / _ \\  | |/ /  / _ \\ | '_ \\ ")
+	fmt.Println("  | |   | (_) | |   <  |  __/ | | | |")
+	fmt.Println("  |_|    \\___/  |_|\\_\\  \\___| |_| |_|")
 	repl.Start(os.Stdin, os.Stdout)
+}
+
+func evalutor() {
+	fmt.Println(" _          _         _      ___   _____")
+	fmt.Println("| |        / \\       / \\    |_ _| |_   _|")
+	fmt.Println("| |       / _ \\     / _ \\    | |    | |")
+	fmt.Println("| |___   / ___ \\   / ___ \\   | |    | |")
+	fmt.Println("|_____| /_/   \\_\\ /_/   \\_\\ |___|   |_|")
+	evaluator.Start(os.Stdin, os.Stdout)
 }
