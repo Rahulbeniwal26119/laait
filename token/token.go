@@ -80,14 +80,14 @@ const (
 )
 
 var keywords = map[string]TokenType{
-	"fn":     FUNCTION,
-	"let":    LET,
-	"bind":   BIND,
-	"true":   TRUE,
-	"false":  FALSE,
-	"if":     IF,
-	"else":   ELSE,
-	"return": RETURN,
+	"function": FUNCTION,
+	"let":      LET,
+	"bind":     BIND,
+	"true":     TRUE,
+	"false":    FALSE,
+	"if":       IF,
+	"else":     ELSE,
+	"return":   RETURN,
 }
 
 func LookupNoun(noun string) TokenType {
