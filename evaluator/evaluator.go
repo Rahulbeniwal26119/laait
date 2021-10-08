@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"fmt"
 	"laait/ast"
 	"laait/object"
 )
@@ -141,8 +142,11 @@ func evalIntegerInfixExpression(
 		return nativeBoolToBoolObject(leftVal == rightVal)
 	case "!=":
 		return nativeBoolToBoolObject(leftVal != rightVal)
+	case left.Type() != right.Type():
+		return newError("type mismatch: %s %s %s",
+			left.Type(), operator, right.Type())
 	default:
-		return NULL
+		newError("unknown operator: -%s", right.Type())
 	}
 }
 
@@ -153,7 +157,7 @@ func evalPrefixExpression(operator string, right object.Object) object.Object {
 	case "-":
 		return evalMinusPrefixOperatorExpression(right)
 	default:
-		return NULL
+		return newError("unknown operator: %s%s", operator, right.Type())
 	}
 }
 
@@ -198,4 +202,8 @@ func evalStatements(stmts []ast.Statement) object.Object {
 	}
 
 	return result
+}
+
+func newError(format string, a ...interface{}) *object.Error {
+	return &object.Error{Message: fmt.Sprintf(format, a...)}
 }
