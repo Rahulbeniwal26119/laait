@@ -6,6 +6,7 @@ import (
 	"io"
 	"laait/evaluator"
 	"laait/lexer"
+	"laait/object/environment"
 	"laait/parser"
 )
 
@@ -13,6 +14,8 @@ func Start(in io.Reader, out io.Writer) {
 	const PARSER_PROMPT = ">>> "
 
 	scanner := bufio.NewScanner(in)
+	env := environment.NewEnvironment()
+
 	for {
 		fmt.Print(PARSER_PROMPT)
 		scanned := scanner.Scan()
@@ -30,12 +33,11 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program)
+		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
 		}
-
 	}
 }
 
