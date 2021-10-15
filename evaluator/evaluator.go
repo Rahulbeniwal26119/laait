@@ -3,8 +3,8 @@ package evaluator
 import (
 	"fmt"
 	"laait/ast"
+	"laait/environment"
 	"laait/object"
-	"laait/object/environment"
 )
 
 var (
@@ -73,7 +73,7 @@ func Eval(node ast.Node, env *environment.Environment) object.Object {
 	case *ast.FunctionLiteral:
 		params := node.Parameters
 		body := node.Body
-		return &object.Function{Parameters: params, Env: env, Body: body}
+		return &environment.Function{Parameters: params, Env: env, Body: body}
 
 	case *ast.CallExpression:
 		function := Eval(node.Function, env)
@@ -84,9 +84,42 @@ func Eval(node ast.Node, env *environment.Environment) object.Object {
 		if len(args) == 1 && isError(args[0]) {
 			return args[0]
 		}
+		return applyFunction(function, args)
 	}
 
 	return nil
+}
+
+func applyFunction(fn object.Object, args []object.Object) object.Object {
+	function, ok := fn.(*environment.Function)
+	if !ok {
+		return newError("not a function: %s", fn.Type())
+	}
+
+	extendedEnv := extendFunctionEnv(function, args)
+	evaluated := Eval(function.Body, extendedEnv)
+	return unwrapReturnValue(evaluated)
+}
+
+func extendFunctionEnv(
+	fn *environment.Function,
+	args []object.Object,
+) *environment.Environment {
+	env := environment.NewEnclosedEnvironment(fn.Env)
+
+	for paramIndex, param := range fn.Parameters {
+		env.Set(param.Value, args[paramIndex])
+	}
+
+	return env
+}
+
+func unwrapReturnValue(obj object.Object) object.Object {
+	if returnValue, ok := obj.(*object.ReturnValue); ok {
+		return returnValue.Value
+	}
+
+	return obj
 }
 
 func evalExpressions(

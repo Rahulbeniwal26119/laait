@@ -1,10 +1,10 @@
 package evaluator
 
 import (
+	"laait/environment"
 	"laait/evaluator"
 	"laait/lexer"
 	"laait/object"
-	"laait/object/environment"
 	"laait/parser"
 	"testing"
 )
@@ -253,7 +253,7 @@ func TestFunctionObject(t *testing.T) {
 	input := "function(x) { x + 2; };"
 	evaluated := testEval(input)
 
-	fn, ok := evaluated.(*object.Function)
+	fn, ok := evaluated.(*environment.Function)
 	if !ok {
 		t.Fatalf("object is not function. got=%T (%+v)", evaluated, evaluated)
 	}
