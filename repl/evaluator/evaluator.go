@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"laait/environment"
 	"laait/evaluator"
 	"laait/lexer"
-	"laait/object/environment"
 	"laait/parser"
 )
 
