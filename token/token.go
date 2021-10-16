@@ -38,8 +38,9 @@ const (
 	ILLEGAL = "ILLEGAL" // ILLEGAL signifies token character we donot know about
 
 	// Identifiers and Literals
-	NOUN = "NOUN" // Noun is alias for Identifiers
-	INT  = "INT"
+	NOUN   = "NOUN" // Noun is alias for Identifiers
+	INT    = "INT"
+	STRING = "STRING"
 
 	// Operators
 	ASSIGN   = "="
