@@ -157,7 +157,7 @@ func evalIdentifier(
 		return builtin
 	}
 
-	return newError("identifier not found" + node.Value)
+	return newError("identifier not found: " + node.Value)
 }
 
 func evalBlockStatement(block *ast.BlockStatement, env *environment.Environment) object.Object {
@@ -358,7 +358,7 @@ var builtins = map[string]*object.Builtin{
 	"len": &object.Builtin{
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments.got=%d, want=1",
+				return newError("wrong number of argument, got=%d, want=1",
 					len(args))
 			}
 
