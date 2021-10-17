@@ -52,7 +52,7 @@ func Eval(node ast.Node, env *environment.Environment) object.Object {
 		return &object.Integer{Value: node.Value}
 
 	case *ast.Identifier:
-		return evalIndentifier(node, env)
+		return evalIdentifier(node, env)
 
 	case *ast.Boolean:
 		return nativeBoolToBoolObject(node.Value)
@@ -93,14 +93,19 @@ func Eval(node ast.Node, env *environment.Environment) object.Object {
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
-	function, ok := fn.(*environment.Function)
-	if !ok {
+	// function, ok := fn.(*environment.Function)
+	switch fn := fn.(type) {
+	case *environment.Function:
+		extendedEnv := extendFunctionEnv(fn, args)
+		evaluated := Eval(fn.Body, extendedEnv)
+		return unwrapReturnValue(evaluated)
+
+	case *object.Builtin:
+		return fn.Fn(args...)
+
+	default:
 		return newError("not a function: %s", fn.Type())
 	}
-
-	extendedEnv := extendFunctionEnv(function, args)
-	evaluated := Eval(function.Body, extendedEnv)
-	return unwrapReturnValue(evaluated)
 }
 
 func extendFunctionEnv(
@@ -140,14 +145,21 @@ func evalExpressions(
 	return result
 }
 
-func evalIndentifier(node *ast.Identifier, env *environment.Environment) object.Object {
-	val, ok := env.Get(node.Value)
-	if !ok {
-		return newError("identifier not found: " + node.Value)
+func evalIdentifier(
+	node *ast.Identifier,
+	env *environment.Environment,
+) object.Object {
+	if val, ok := env.Get(node.Value); ok {
+		return val
 	}
 
-	return val
+	if builtin, ok := builtins[node.Value]; ok {
+		return builtin
+	}
+
+	return newError("identifier not found" + node.Value)
 }
+
 func evalBlockStatement(block *ast.BlockStatement, env *environment.Environment) object.Object {
 	var result object.Object
 
@@ -340,4 +352,23 @@ func evalStringInfixExpression(
 	leftVal := left.(*object.String).Value
 	rightVal := right.(*object.String).Value
 	return &object.String{Value: leftVal + rightVal}
+}
+
+var builtins = map[string]*object.Builtin{
+	"len": &object.Builtin{
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments.got=%d, want=1",
+					len(args))
+			}
+
+			switch arg := args[0].(type) {
+			case *object.String:
+				return &object.Integer{Value: int64(len(arg.Value))}
+			default:
+				return newError("argument to `len` not supported, got %s",
+					args[0].Type())
+			}
+		},
+	},
 }
