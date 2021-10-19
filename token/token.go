@@ -77,6 +77,10 @@ const (
 	RETURN   = "RETURN"
 	NOT      = "NOT"
 	OR       = "OR"
+
+	// Array Operators
+	LTBRACKET = "["
+	RTBRACKET = "]"
 )
 
 var keywords = map[string]TokenType{
