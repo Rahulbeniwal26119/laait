@@ -21,6 +21,7 @@ func TestNextToken(t *testing.T) {
 	10 != 9
 	"foobar"
 	"foo bar"
+	[1,2];
     `
 
 	// var Token struct {
@@ -103,6 +104,12 @@ func TestNextToken(t *testing.T) {
 		{token.INT, "9"},
 		{token.STRING, "foobar"},
 		{token.STRING, "foo bar"},
+		{token.LTBRACKET, "["},
+		{token.INT, "1"},
+		{token.COMMA, ","},
+		{token.INT, "2"},
+		{token.RTBRACKET, "]"},
+		{token.SEMICOLON, ";"},
 		{token.FILEEND, ""},
 	}
 
