@@ -1,7 +1,9 @@
 package object
 
 import (
+	"bytes"
 	"fmt"
+	"strings"
 )
 
 type ObjectType string
@@ -15,6 +17,7 @@ const (
 	FUNCTION_OBJ     = "FUNCTION"
 	STRING_OBJ       = "STRING"
 	BUILT_OBJ        = "BUILTIN"
+	ARRAY_OBJ        = "ARRAY"
 )
 
 type Error struct {
@@ -48,15 +51,36 @@ type Builtin struct {
 	Fn BuiltinFunction
 }
 
+type BuiltinFunction func(args ...Object) Object
+
+type Array struct {
+	Elements []Object
+}
+
+func (ao *Array) Type() ObjectType { return ARRAY_OBJ }
+
+func (ao *Array) Inspect() string {
+	var out bytes.Buffer
+
+	elements := []string{}
+	for _, e := range ao.Elements {
+		elements = append(elements, e.Inspect())
+	}
+
+	out.WriteString("[")
+	out.WriteString(strings.Join(elements, ","))
+	out.WriteString("]")
+
+	return out.String()
+}
 func (b *Builtin) Type() ObjectType {
 	return BUILT_OBJ
 }
 
-type BuiltinFunction func(args ...Object) Object
-
 func (b *Builtin) Inspect() string {
 	return "builtin function"
 }
+
 func (n *Null) Type() ObjectType { return NULL_OBJ }
 
 func (n *Null) Inspect() string { return "null" }
