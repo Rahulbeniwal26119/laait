@@ -50,6 +50,7 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 	QUOTE    = "\""
+	COLON    = ":"
 
 	LT = "<"
 	GT = ">"
