@@ -224,7 +224,10 @@ func evalIdentifier(
 	return newError("identifier not found: " + node.Value)
 }
 
-func evalBlockStatement(block *ast.BlockStatement, env *environment.Environment) object.Object {
+func evalBlockStatement(
+	block *ast.BlockStatement,
+	env *environment.Environment,
+) object.Object {
 	var result object.Object
 
 	for _, statement := range block.Statements {
@@ -254,9 +257,9 @@ func evalProgram(program *ast.Program, env *environment.Environment) object.Obje
 			return result
 		}
 
-		if returnValue, ok := result.(*object.ReturnValue); ok {
-			return returnValue.Value
-		}
+		// if returnValue, ok := result.(*object.ReturnValue); ok {
+		// 	return returnValue.Value
+		// }
 	}
 	return result
 }
