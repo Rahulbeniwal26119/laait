@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"hash/fnv"
+	"laait/ast"
 	"strings"
 )
 
@@ -20,10 +21,20 @@ const (
 	BUILT_OBJ        = "BUILTIN"
 	ARRAY_OBJ        = "ARRAY"
 	HASH_OBJ         = "HASH"
+	QUOTE_OBJ        = "QUOTE" // macro
 )
 
 type Error struct {
 	Message string
+}
+
+type Quote struct {
+	Node ast.Node
+}
+
+func (q *Quote) Type() ObjectType { return QUOTE_OBJ }
+func (q *Quote) Inspect() string {
+	return q.Node.String() + ")"
 }
 
 type ReturnValue struct {
