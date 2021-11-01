@@ -99,19 +99,24 @@ func TestModify(t *testing.T) {
 		{
 			&ast.FunctionLiteral{
 				Parameters: []*ast.Identifier{},
-				Body : &ast.BlockStatement{
+				Body: &ast.BlockStatement{
 					Statements: []ast.Statement{
 						&ast.ExpressionStatement{Expression: one()},
-					},	
-				},
-			&ast.FunctionLiteral{
-				Parameters: []*ast.Identifier{},
-				Body := &ast.Vlock&ast.BlockStatement{
-					Statements: []Statement{
-						&ast.ExpressionStatement{Expression: two()}
 					},
 				},
 			},
+			&ast.FunctionLiteral{
+				Parameters: []*ast.Identifier{},
+				Body: &ast.BlockStatement{
+					Statements: []ast.Statement{
+						&ast.ExpressionStatement{Expression: two()},
+					},
+				},
+			},
+		},
+		{
+			&ast.ArrayLiteral{Elements: []ast.Expression{one(), one()}},
+			&ast.ArrayLiteral{Elements: []ast.Expression{two(), two()}},
 		},
 	}
 
@@ -123,4 +128,24 @@ func TestModify(t *testing.T) {
 			t.Errorf("not equal. got=%#v, want=%#v", modified, tt.expected)
 		}
 	}
+	hashLiteral := &ast.HashLiteral{
+		Pairs: map[ast.Expression]ast.Expression{
+			one(): one(),
+			two(): two(),
+		},
+	}
+	ast.Modify(hashLiteral, turnOneIntoTwo)
+
+	for key, val := range hashLiteral.Pairs {
+		key, _ := key.(*ast.IntegerLiteral)
+		if key.Value != 2 {
+			t.Errorf("value is not %d, got=%d", 2, key.Value)
+		}
+
+		val, _ := val.(*ast.IntegerLiteral)
+		if val.Value != 2 {
+			t.Errorf("value is not %d, got=%d", 2, val.Value)
+		}
+	}
+
 }
