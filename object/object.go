@@ -34,7 +34,7 @@ type Quote struct {
 
 func (q *Quote) Type() ObjectType { return QUOTE_OBJ }
 func (q *Quote) Inspect() string {
-	return q.Node.String() + ")"
+	return q.Node.String()
 }
 
 type ReturnValue struct {
