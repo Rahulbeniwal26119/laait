@@ -78,6 +78,7 @@ const (
 	RETURN   = "RETURN"
 	NOT      = "NOT"
 	OR       = "OR"
+	MACRO    = "MACRO"
 
 	// Array Operators
 	LTBRACKET = "["
@@ -93,6 +94,7 @@ var keywords = map[string]TokenType{
 	"if":       IF,
 	"else":     ELSE,
 	"return":   RETURN,
+	"macro":    MACRO,
 }
 
 func LookupNoun(noun string) TokenType {
