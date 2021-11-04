@@ -22,6 +22,7 @@ const (
 	ARRAY_OBJ        = "ARRAY"
 	HASH_OBJ         = "HASH"
 	QUOTE_OBJ        = "QUOTE" // macro
+	MACRO_OBJ        = "MACRO"
 )
 
 type Error struct {
