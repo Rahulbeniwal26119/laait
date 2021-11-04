@@ -82,6 +82,11 @@ type FunctionLiteral struct {
 	Body       *BlockStatement
 }
 
+type MacroLiteral struct {
+	Token      token.Token
+	Parameters []*Identifier
+	Body       *BlockStatement
+}
 type CallExpression struct {
 	Token     token.Token // '('
 	Function  Expression  // param or function(){}
@@ -253,7 +258,7 @@ func (ls *LetStatement) String() string {
 
 	out.WriteString(ls.TokenLiteral() + " ")
 	out.WriteString(ls.Name.String())
-	out.WriteString("=")
+	out.WriteString(" = ")
 
 	if ls.Value != nil {
 		out.WriteString(ls.Value.String())
@@ -318,7 +323,7 @@ func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
 
 func (rs *ReturnStatement) statementNode()       {}
 func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
-func (*Identifier) expressionNode()              {}
+func (i *Identifier) expressionNode()            {}
 func (i *Identifier) TokenLiteral() string       { return i.Token.Literal }
 func (p *Program) TokenLiteral() string {
 	if len(p.Statements) > 0 {
@@ -326,4 +331,21 @@ func (p *Program) TokenLiteral() string {
 	} else {
 		return ""
 	}
+}
+
+func (ml *MacroLiteral) expressionNode()      {}
+func (ml *MacroLiteral) TokenLiteral() string { return ml.Token.Literal }
+func (ml *MacroLiteral) String() string {
+	params := []string{}
+	var out bytes.Buffer
+	for _, p := range ml.Parameters {
+		params = append(params, p.String())
+	}
+	out.WriteString(ml.TokenLiteral())
+	out.WriteString("(")
+	out.WriteString(strings.Join(params, ", "))
+	out.WriteString(") ")
+	out.WriteString(ml.Body.String())
+
+	return out.String()
 }

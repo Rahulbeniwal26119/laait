@@ -24,7 +24,7 @@ func TestString(t *testing.T) {
 		},
 	}
 
-	if program.String() != "bind myVar=anotherVar;" {
+	if program.String() != "bind myVar = anotherVar;" {
 		t.Errorf("Program.String() wrong. got %q", program.String())
 	}
 }

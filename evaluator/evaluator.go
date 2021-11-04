@@ -81,6 +81,9 @@ func Eval(node ast.Node, env *environment.Environment) object.Object {
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 	case *ast.CallExpression:
+		if node.Function.TokenLiteral() == "quote" {
+			return quote(node.Arguments[0], env)
+		}
 		function := Eval(node.Function, env)
 		if isError(function) {
 			return function
@@ -224,7 +227,10 @@ func evalIdentifier(
 	return newError("identifier not found: " + node.Value)
 }
 
-func evalBlockStatement(block *ast.BlockStatement, env *environment.Environment) object.Object {
+func evalBlockStatement(
+	block *ast.BlockStatement,
+	env *environment.Environment,
+) object.Object {
 	var result object.Object
 
 	for _, statement := range block.Statements {
@@ -254,9 +260,9 @@ func evalProgram(program *ast.Program, env *environment.Environment) object.Obje
 			return result
 		}
 
-		if returnValue, ok := result.(*object.ReturnValue); ok {
-			return returnValue.Value
-		}
+		// if returnValue, ok := result.(*object.ReturnValue); ok {
+		// 	return returnValue.Value
+		// }
 	}
 	return result
 }
@@ -379,19 +385,19 @@ func nativeBoolToBoolObject(input bool) *object.Boolean {
 	return FALSE
 }
 
-func evalStatements(stmts []ast.Statement, env *environment.Environment) object.Object {
-	var result object.Object
+// func evalStatements(stmts []ast.Statement, env *environment.Environment) object.Object {
+// 	var result object.Object
 
-	for _, statement := range stmts {
-		result = Eval(statement, env)
+// 	for _, statement := range stmts {
+// 		result = Eval(statement, env)
 
-		if returnValue, ok := result.(*object.ReturnValue); ok {
-			return returnValue.Value
-		}
-	}
+// 		if returnValue, ok := result.(*object.ReturnValue); ok {
+// 			return returnValue.Value
+// 		}
+// 	}
 
-	return result
-}
+// 	return result
+// }
 
 func newError(format string, a ...interface{}) *object.Error {
 	return &object.Error{Message: fmt.Sprintf(format, a...)}
