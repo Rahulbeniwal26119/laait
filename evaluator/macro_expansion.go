@@ -3,6 +3,7 @@ package evaluator
 import (
 	"laait/ast"
 	"laait/environment"
+	"laait/object"
 )
 
 func DefineMacros(program *ast.Program, env *environment.Environment) {
@@ -48,4 +49,75 @@ func addMacro(stmt ast.Statement, env *environment.Environment) {
 		Body:       macroLiteral.Body,
 	}
 	env.Set(letStatement.Name.Value, macro)
+}
+
+func ExpandMacros(program ast.Node, env *environment.Environment) ast.Node {
+	return ast.Modify(program, func(node ast.Node) ast.Node {
+		callExpression, ok := node.(*ast.CallExpression)
+		if !ok {
+			return node
+		}
+
+		macro, ok := isMacroCall(callExpression, env)
+		if !ok {
+			return node
+		}
+
+		args := quoteArgs(callExpression)
+		evalEnv := extendMacroEnv(macro, args)
+
+		evaluated := Eval(macro.Body, evalEnv)
+
+		quote, ok := evaluated.(*object.Quote)
+		if !ok {
+			panic("we only support returning AST-Nodes from macros")
+		}
+
+		return quote.Node
+	})
+}
+
+func isMacroCall(
+	exp *ast.CallExpression,
+	env *environment.Environment,
+) (*environment.Macro, bool) {
+	identifier, ok := exp.Function.(*ast.Identifier)
+	if !ok {
+		return nil, false
+	}
+
+	obj, ok := env.Get(identifier.Value)
+	if !ok {
+		return nil, false
+	}
+
+	macro, ok := obj.(*environment.Macro)
+	if !ok {
+		return nil, false
+	}
+
+	return macro, true
+}
+
+func quoteArgs(exp *ast.CallExpression) []*object.Quote {
+	args := []*object.Quote{}
+
+	for _, a := range exp.Arguments {
+		args = append(args, &object.Quote{Node: a})
+	}
+
+	return args
+}
+
+func extendMacroEnv(
+	macro *environment.Macro,
+	args []*object.Quote,
+) *environment.Environment {
+	extended := environment.NewEnclosedEnvironment(macro.Env)
+
+	for paramIdx, param := range macro.Parameters {
+		extended.Set(param.Value, args[paramIdx])
+	}
+
+	return extended
 }
