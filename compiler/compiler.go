@@ -1,7 +1,7 @@
 package compiler
 
 import (
-	"go/ast"
+	"laait/ast"
 	"laait/code"
 	"laait/object"
 )
