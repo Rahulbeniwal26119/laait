@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"fmt"
 	"laait/ast"
 	"laait/code"
 	"laait/object"
@@ -49,10 +50,35 @@ func (c *Compiler) Compile(node ast.Node) error {
 			return err
 		}
 
+		switch node.Operator {
+		case "+":
+			c.emit(code.OPADD)
+		default:
+			return fmt.Errorf("unknown operator %s", node.Operator)
+		}
+
 	case *ast.IntegerLiteral:
-		// Todo
+		integer := &object.Integer{Value: node.Value}
+		c.emit(code.OpConstant, c.addConstant(integer))
 	}
 	return nil
+}
+
+func (c *Compiler) addConstant(obj object.Object) int {
+	c.constants = append(c.constants, obj)
+	return len(c.constants) - 1
+}
+
+func (c *Compiler) emit(op code.Opcode, operands ...int) int {
+	ins := code.Make(op, operands...)
+	pos := c.addInstruction(ins)
+	return pos
+}
+
+func (c *Compiler) addInstruction(ins []byte) int {
+	newInstructionPosition := len(c.instructions)
+	c.instructions = append(c.instructions, ins...)
+	return newInstructionPosition
 }
 
 func (c *Compiler) Bytecode() *Bytecode {
