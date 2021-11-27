@@ -12,11 +12,14 @@ import (
 	"strconv"
 )
 
-func Start(in io.Reader, out io.Writer) {
+func Start(in io.Reader, out io.Writer, show_bytecode bool) {
 	scanner := bufio.NewScanner(in)
 	count := 1
+	if show_bytecode {
+		fmt.Println(" === Bytecode Verbose Mode === ")
+	}
 	for {
-		fmt.Fprintf(out, ">>>"+strconv.Itoa(count)+" ")
+		fmt.Fprintf(out, ">>> "+"["+strconv.Itoa(count)+"] ")
 		scanned := scanner.Scan()
 		if !scanned {
 			return
@@ -34,18 +37,23 @@ func Start(in io.Reader, out io.Writer) {
 
 		comp := compiler.New()
 		err := comp.Compile(program)
-
+		//
 		if err != nil {
 			fmt.Fprintf(out, "Compilation failed:\n %s\n", err)
 		}
-
-		fmt.Println(comp.Bytecode())
+		//
+		if show_bytecode {
+			io.WriteString(out, " ====== Bytecode ===== \n")
+			fmt.Println(comp.Bytecode())
+			io.WriteString(out, " ====== * ===== \n")
+		}
 		machine := vm.New(comp.Bytecode())
+		err = machine.Run()
 		if err != nil {
 			fmt.Fprintf(out, "Compilation failed:\n %s \n", err)
 			continue
 		}
-
+		//
 		stackTop := machine.StackTop()
 		io.WriteString(out, stackTop.Inspect())
 		io.WriteString(out, "\n")
@@ -61,5 +69,11 @@ func printParserErrors(out io.Writer, errors []string) {
 }
 
 func main() {
-	Start(os.Stdin, os.Stdout)
+	show_bytecode := false
+	if len(os.Args) > 1 {
+		if os.Args[1] == "-b" {
+			show_bytecode = true
+		}
+	}
+	Start(os.Stdin, os.Stdout, show_bytecode)
 }
