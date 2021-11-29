@@ -12,6 +12,7 @@ import (
 	"strconv"
 )
 
+// main code initiatiator
 func Start(in io.Reader, out io.Writer, show_bytecode bool) {
 	scanner := bufio.NewScanner(in)
 	count := 1
