@@ -11,7 +11,7 @@ func TestNextToken(t *testing.T) {
 	input2 := `
     bind five = 5;
     bind ten = 10;
-    bind add = fn(x,y){
+    bind add = function(x,y){
         x + y;
     };
     bind result = add(five, ten);
@@ -19,7 +19,12 @@ func TestNextToken(t *testing.T) {
     5 < 10 > 5;
 	10 == 10
 	10 != 9
-    `
+	"foobar"
+	"foo bar"
+	[1,2];
+    {"foo": "bar"}
+	macro(x, y) { x + y;};
+	`
 
 	// var Token struct {
 	// 	expectedType    token.TokenType
@@ -58,7 +63,7 @@ func TestNextToken(t *testing.T) {
 		{token.BIND, "bind"},
 		{token.NOUN, "add"},
 		{token.ASSIGN, "="},
-		{token.FUNCTION, "fn"},
+		{token.FUNCTION, "function"},
 		{token.LTPAREN, "("},
 		{token.NOUN, "x"},
 		{token.COMMA, ","},
@@ -99,6 +104,32 @@ func TestNextToken(t *testing.T) {
 		{token.INT, "10"},
 		{token.NOT_EQ, "!="},
 		{token.INT, "9"},
+		{token.STRING, "foobar"},
+		{token.STRING, "foo bar"},
+		{token.LTBRACKET, "["},
+		{token.INT, "1"},
+		{token.COMMA, ","},
+		{token.INT, "2"},
+		{token.RTBRACKET, "]"},
+		{token.SEMICOLON, ";"},
+		{token.LTBRACE, "{"},
+		{token.STRING, "foo"},
+		{token.COLON, ":"},
+		{token.STRING, "bar"},
+		{token.RTBRACE, "}"},
+		{token.MACRO, "macro"},
+		{token.LTBRACKET, "("},
+		{token.NOUN, "x"},
+		{token.COMMA, ","},
+		{token.NOUN, "y"},
+		{token.RTPAREN, ")"},
+		{token.LTBRACE, "{"},
+		{token.NOUN, "x"},
+		{token.PLUS, "+"},
+		{token.NOUN, "y"},
+		{token.SEMICOLON, ";"},
+		{token.RTBRACE, "}"},
+		{token.SEMICOLON, ";"},
 		{token.FILEEND, ""},
 	}
 

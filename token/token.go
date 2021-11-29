@@ -39,8 +39,9 @@ const (
 	ILLEGAL = "ILLEGAL" // ILLEGAL signifies token character we donot know about
 
 	// Identifiers and Literals
-	NOUN = "NOUN" // Noun is alias for Identifiers
-	INT  = "INT"
+	NOUN   = "NOUN" // Noun is alias for Identifiers
+	INT    = "INT"
+	STRING = "STRING"
 
 	// Operators
 	ASSIGN   = "="
@@ -50,6 +51,8 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 	QUOTE    = "\""
+	FSLASH = "\\"
+	COLON    = ":"
 
 	LT = "<"
 	GT = ">"
@@ -77,6 +80,11 @@ const (
 	RETURN   = "RETURN"
 	NOT      = "NOT"
 	OR       = "OR"
+	MACRO    = "MACRO"
+
+	// Array Operators
+	LTBRACKET = "["
+	RTBRACKET = "]"
 )
 
 var keywords = map[string]TokenType{
@@ -88,6 +96,7 @@ var keywords = map[string]TokenType{
 	"if":       IF,
 	"else":     ELSE,
 	"return":   RETURN,
+	"macro":    MACRO,
 }
 
 func LookupNoun(noun string) TokenType {
