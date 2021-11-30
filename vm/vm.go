@@ -10,6 +10,9 @@ import (
 
 const StackSize = 2560
 
+var True = &object.Boolean{Value: true}
+var False = &object.Boolean{Value: false}
+
 type VM struct {
 	constant     []object.Object
 	instructions code.Instructions
@@ -55,6 +58,16 @@ func (vm *VM) Run() error {
 			}
 		case code.OPPOP:
 			vm.pop()
+		case code.OPTRUE:
+			err := vm.push(True)
+			if err != nil {
+				return err
+			}
+		case code.OPFALSE:
+			err := vm.push(False)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
