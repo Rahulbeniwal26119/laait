@@ -43,6 +43,8 @@ const (
 	OPSUB
 	OPMUL
 	OPDIV
+	OPTRUE
+	OPFALSE
 )
 
 type Definition struct {
@@ -57,6 +59,8 @@ var definitions = map[Opcode]*Definition{
 	OPSUB:      {"OPSUB", []int{}},
 	OPMUL:      {"OPMUL", []int{}},
 	OPDIV:      {"OPDIV", []int{}},
+	OPTRUE:     {"OPTRUE", []int{}},
+	OPFALSE:    {"OPFALSE", []int{}},
 }
 
 func Lookup(op byte) (*Definition, error) {
