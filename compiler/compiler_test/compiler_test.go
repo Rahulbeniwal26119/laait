@@ -191,6 +191,66 @@ func TestBooleanExpressions(t *testing.T) {
 				code.Make(code.OPPOP),
 			},
 		},
+		{
+			input:             "1 > 2",
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPGREATERTHAN),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "1 < 2",
+			expectedConstants: []interface{}{2, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPGREATERTHAN),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "1 == 2",
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPEQUAL),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "1 != 2",
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPNOTEQUAL),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "true == false",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OPTRUE),
+				code.Make(code.OPFALSE),
+				code.Make(code.OPEQUAL),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "true != false",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OPTRUE),
+				code.Make(code.OPFALSE),
+				code.Make(code.OPNOTEQUAL),
+				code.Make(code.OPPOP),
+			},
+		},
 	}
 	runCompilerTest(t, tests)
 }
