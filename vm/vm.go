@@ -68,10 +68,59 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.OPEQUAL, code.OPNOTEQUAL, code.OPGREATERTHAN:
+			err := vm.executeComparison(op)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
 	return nil
+}
+
+func (vm *VM) executeComparison(op code.Opcode) error {
+	right := vm.pop()
+	left := vm.pop()
+
+	if left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ {
+		return vm.executeIntegerComparision(op, left, right)
+	}
+
+	switch op {
+	case code.OPEQUAL:
+		return vm.push(nativeBoolToBooleanObject(right == left))
+	case code.OPNOTEQUAL:
+		return vm.push(nativeBoolToBooleanObject(right != left))
+	default:
+		return fmt.Errorf("unknown operator : %d ( %s %s)", op, left.Type(), right.Type())
+	}
+}
+
+func (vm *VM) executeIntegerComparision(
+	op code.Opcode,
+	left, right object.Object,
+) error {
+	leftValue := left.(*object.Integer).Value
+	rightValue := right.(*object.Integer).Value
+
+	switch op {
+	case code.OPEQUAL:
+		return vm.push(nativeBoolToBooleanObject(rightValue == leftValue))
+	case code.OPNOTEQUAL:
+		return vm.push(nativeBoolToBooleanObject(rightValue != leftValue))
+	case code.OPGREATERTHAN:
+		return vm.push(nativeBoolToBooleanObject(leftValue > rightValue))
+	default:
+		return fmt.Errorf("unknown operator : %d", op)
+	}
+}
+
+func nativeBoolToBooleanObject(input bool) *object.Boolean {
+	if input {
+		return True
+	}
+	return False
 }
 
 func (vm *VM) push(object object.Object) error {
