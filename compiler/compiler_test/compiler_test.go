@@ -94,6 +94,15 @@ func TestIntegerArithmetic(t *testing.T) {
 				code.Make(code.OPPOP),
 			},
 		},
+		{
+			input:             "-1",
+			expectedConstants: []interface{}{1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPMINUS),
+				code.Make(code.OPPOP),
+			},
+		},
 	}
 
 	runCompilerTest(t, tests)
@@ -248,6 +257,15 @@ func TestBooleanExpressions(t *testing.T) {
 				code.Make(code.OPTRUE),
 				code.Make(code.OPFALSE),
 				code.Make(code.OPNOTEQUAL),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "!true",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OPTRUE),
+				code.Make(code.OPBANG),
 				code.Make(code.OPPOP),
 			},
 		},

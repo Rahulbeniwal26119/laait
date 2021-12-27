@@ -26,6 +26,7 @@ func New() *Compiler {
 
 func (c *Compiler) Compile(node ast.Node) error {
 	switch node := node.(type) {
+
 	case *ast.Program:
 		for _, s := range node.Statements {
 			err := c.Compile(s)
@@ -40,6 +41,20 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 		c.emit(code.OPPOP)
 
+	case *ast.PrefixExpression:
+		err := c.Compile(node.Right)
+		if err != nil {
+			return err
+		}
+
+		switch node.Operator {
+		case "!":
+			c.emit(code.OPBANG)
+		case "-":
+			c.emit(code.OPMINUS)
+		default:
+			return fmt.Errorf("unknown operator %s", node.Operator)
+		}
 	case *ast.InfixExpression:
 		if node.Operator == "<" {
 			err := c.Compile(node.Right)
