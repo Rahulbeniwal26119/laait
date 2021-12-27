@@ -48,6 +48,8 @@ const (
 	OPEQUAL
 	OPNOTEQUAL
 	OPGREATERTHAN
+	OPMINUS
+	OPBANG
 )
 
 type Definition struct {
@@ -67,6 +69,8 @@ var definitions = map[Opcode]*Definition{
 	OPEQUAL:       {"OPEQUAL", []int{}},
 	OPNOTEQUAL:    {"OPNOTEQUAL", []int{}},
 	OPGREATERTHAN: {"OPGREATERTHAN", []int{}},
+	OPMINUS:       {"OPMINUS", []int{}},
+	OPBANG:        {"OPBANG", []int{}},
 }
 
 func Lookup(op byte) (*Definition, error) {
