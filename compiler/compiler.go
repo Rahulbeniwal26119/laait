@@ -87,38 +87,6 @@ func (c *Compiler) Compile(node ast.Node) error {
 		afterOptionalPos := len(c.instructions)
 		c.changeOperands(jumpPos, afterOptionalPos)
 
-		// Bogus Jump offset, will reset automatically
-		// c.lastInstruction = c.previousInstruction
-
-		// jumpNotTruthyPos := c.emit(code.OPJUMPNOTTRUE, 9999)
-		// err = c.Compile(node.Effect)
-		// if err != nil {
-		// 	return err
-		// }
-		// if c.lastInstructionIsPop() {
-		// 	c.removeLastPop()
-		// }
-		// if node.Optional == nil {
-		// 	afterEffectPos := len(c.instructions)
-		// 	c.changeOperands(jumpNotTruthyPos, afterEffectPos)
-		// } else {
-		// 	jumpPos := c.emit(code.OPJUMP, 9999)
-		// 	afterEffectPos := len(c.instructions)
-		// 	c.changeOperands(jumpNotTruthyPos, afterEffectPos)
-
-		// 	err := c.Compile(node.Optional)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-
-		// 	if c.lastInstructionIsPop() {
-		// 		c.removeLastPop()
-		// 	}
-
-		// 	afterOptionalPos := len(c.instructions)
-		// 	c.changeOperands(jumpPos, afterOptionalPos)
-		// }
-
 	case *ast.BlockStatement:
 		for _, s := range node.Statements {
 			err := c.Compile(s)
