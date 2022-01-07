@@ -45,6 +45,11 @@ func (vm *VM) Run() error {
 		op := code.Opcode(vm.instructions[ip])
 
 		switch op {
+		case code.OPNULL:
+			err := vm.push(Null)
+			if err != nil {
+				return err
+			}
 		case code.OpConstant:
 			constIndex := code.ReadUint16(vm.instructions[ip+1:])
 			ip += 2
@@ -97,11 +102,6 @@ func (vm *VM) Run() error {
 			condition := vm.pop()
 			if !isTruthy(condition) {
 				ip = pos - 1
-			}
-		case code.OPNULL:
-			err := vm.push(Null)
-			if err != nil {
-				return err
 			}
 		}
 
