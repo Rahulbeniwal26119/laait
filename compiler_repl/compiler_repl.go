@@ -6,6 +6,7 @@ import (
 	"io"
 	"laait/compiler"
 	"laait/lexer"
+	"laait/object"
 	"laait/parser"
 	"laait/vm"
 	"os"
@@ -15,6 +16,10 @@ import (
 // main code initiatiator
 func Start(in io.Reader, out io.Writer, show_bytecode bool) {
 	scanner := bufio.NewScanner(in)
+	constants := []object.Object{}
+	globals := make([]object.Object, vm.GlobalSize)
+	symbolTable := compiler.NewSymbolTable()
+
 	count := 1
 	if show_bytecode {
 		fmt.Println(" === Bytecode Verbose Mode === ")
@@ -36,11 +41,12 @@ func Start(in io.Reader, out io.Writer, show_bytecode bool) {
 			continue
 		}
 
-		comp := compiler.New()
+		comp := compiler.NewWithState(symbolTable, constants)
 		err := comp.Compile(program)
 		//
 		if err != nil {
 			fmt.Fprintf(out, "Compilation failed:\n %s\n", err)
+			continue
 		}
 		//
 		if show_bytecode {
@@ -48,7 +54,9 @@ func Start(in io.Reader, out io.Writer, show_bytecode bool) {
 			fmt.Println(comp.Bytecode())
 			io.WriteString(out, " ====== * ===== \n")
 		}
-		machine := vm.New(comp.Bytecode())
+		code := comp.Bytecode()
+		constants = code.Constants
+		machine := vm.NewWithGlobalStore(code, globals)
 		err = machine.Run()
 		if err != nil {
 			fmt.Fprintf(out, "Compilation failed:\n %s \n", err)
