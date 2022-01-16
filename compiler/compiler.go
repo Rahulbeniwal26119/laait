@@ -237,3 +237,14 @@ func (c *Compiler) changeOperands(opPos int, operands ...int) {
 	newInstruction := code.Make(op, operands...)
 	c.replaceInstruction(opPos, newInstruction)
 }
+
+// for repl each time new compiler and vm instance are created
+// so for supporting identifier we have to add a state to
+// remember symbol during repl
+
+func NewWithState(s *SymbolTable, constants []object.Object) *Compiler {
+	compiler := New()
+	compiler.symbolTable = s
+	compiler.constants = constants
+	return compiler
+}
