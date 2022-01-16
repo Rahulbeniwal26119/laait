@@ -260,3 +260,9 @@ func (vm *VM) executeBinaryIntergerOperation(op code.Opcode, left, right object.
 
 	return vm.push(&object.Integer{Value: result})
 }
+
+func NewWithGlobalStore(bytecode *compiler.Bytecode, s []object.Object) *VM {
+	vm := New(bytecode)
+	vm.globals = s
+	return vm
+}
