@@ -398,7 +398,7 @@ func TestGlobalLetStatements(t *testing.T) {
 func TestStringExpressions(t *testing.T) {
 	tests := []compilerTestCase{
 		{input: `"laait"`,
-			expectedConstants: []interface{}{"monkey"},
+			expectedConstants: []interface{}{"laait"},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
 				code.Make(code.OPPOP)},
