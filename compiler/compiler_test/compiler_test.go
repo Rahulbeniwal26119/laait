@@ -94,6 +94,15 @@ func TestIntegerArithmetic(t *testing.T) {
 				code.Make(code.OPPOP),
 			},
 		},
+		{
+			input:             "-1",
+			expectedConstants: []interface{}{1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPMINUS),
+				code.Make(code.OPPOP),
+			},
+		},
 	}
 
 	runCompilerTest(t, tests)
@@ -152,7 +161,26 @@ func testConstants(
 			if err != nil {
 				return fmt.Errorf("constant %d - testIntegerObject failed : %s", i, err)
 			}
+
+		case string:
+			err := testStringObject(constant, actual[i])
+			if err != nil {
+				return fmt.Errorf("constant %d - testStringObject failed: %s", i, err)
+			}
 		}
+	}
+
+	return nil
+}
+
+func testStringObject(expected string, actual object.Object) error {
+	result, ok := actual.(*object.String)
+	if !ok {
+		return fmt.Errorf("object is not String. got %T (+%v)", actual, actual)
+	}
+
+	if result.Value != expected {
+		return fmt.Errorf("object has wrong value. got=%q, want=%q", result.Value, expected)
 	}
 
 	return nil
@@ -191,6 +219,288 @@ func TestBooleanExpressions(t *testing.T) {
 				code.Make(code.OPPOP),
 			},
 		},
+		{
+			input:             "1 > 2",
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPGREATERTHAN),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "1 < 2",
+			expectedConstants: []interface{}{2, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPGREATERTHAN),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "1 == 2",
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPEQUAL),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "1 != 2",
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPNOTEQUAL),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "true == false",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OPTRUE),
+				code.Make(code.OPFALSE),
+				code.Make(code.OPEQUAL),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "true != false",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OPTRUE),
+				code.Make(code.OPFALSE),
+				code.Make(code.OPNOTEQUAL),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "!true",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OPTRUE),
+				code.Make(code.OPBANG),
+				code.Make(code.OPPOP),
+			},
+		},
 	}
+	runCompilerTest(t, tests)
+}
+
+func TestConditionals(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `
+			if (true) { 10 } else { 20 }; 3333;
+			`,
+			expectedConstants: []interface{}{10, 20, 3333},
+			expectedInstructions: []code.Instructions{
+				// 0000
+				code.Make(code.OPTRUE),
+				// 0001
+				code.Make(code.OPJUMPNOTTRUE, 10),
+				// 0004
+				code.Make(code.OpConstant, 0),
+				// 0007
+				code.Make(code.OPJUMP, 13),
+				// 0010
+				code.Make(code.OpConstant, 1),
+				// 0013
+				code.Make(code.OPPOP),
+				// 0014
+				code.Make(code.OpConstant, 2),
+				// 0017
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input: `
+			if (true) { 10}; 3333;
+			`,
+			expectedConstants: []interface{}{10, 3333},
+			expectedInstructions: []code.Instructions{
+				// 0000
+				code.Make(code.OPTRUE),
+				// 0001
+				code.Make(code.OPJUMPNOTTRUE, 10),
+				// 0004
+				code.Make(code.OpConstant, 0),
+				// 0007
+				code.Make(code.OPJUMP, 11),
+				// 0010
+				code.Make(code.OPNULL),
+				// 0011
+				code.Make(code.OPPOP),
+				// 0012
+				code.Make(code.OpConstant, 1),
+				// 0015
+				code.Make(code.OPPOP),
+			},
+		},
+	}
+
+	runCompilerTest(t, tests)
+}
+
+func TestGlobalLetStatements(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `
+			let one = 1;
+			let two = 2;
+			`,
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPSETGLOBAL, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPSETGLOBAL, 1),
+			},
+		},
+		{
+			input: `
+			let one = 1;
+			one;
+			`,
+			expectedConstants: []interface{}{1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPSETGLOBAL, 0),
+				code.Make(code.OPGETGLOBAL, 0),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input: `
+			let one = 1;
+			let two = one;
+			two;
+			`,
+			expectedConstants: []interface{}{1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPSETGLOBAL, 0),
+				code.Make(code.OPGETGLOBAL, 0),
+				code.Make(code.OPSETGLOBAL, 1),
+				code.Make(code.OPGETGLOBAL, 1),
+				code.Make(code.OPPOP),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
+
+func TestStringExpressions(t *testing.T) {
+	tests := []compilerTestCase{
+		{input: `"laait"`,
+			expectedConstants: []interface{}{"laait"},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPPOP)},
+		},
+		{
+			input:             `"la" + "ait"`,
+			expectedConstants: []interface{}{"la", "ait"},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPADD),
+				code.Make(code.OPPOP),
+			},
+		},
+	}
+
+	runCompilerTest(t, tests)
+}
+
+func TestArrayLiterals(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input:             "[]",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OPARRAY, 0),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "[1,2,3]",
+			expectedConstants: []interface{}{1, 2, 3},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpConstant, 2),
+				code.Make(code.OPARRAY, 3),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "[1+2, 3 -4 , 5 * 6]",
+			expectedConstants: []interface{}{1, 2, 3, 4, 5, 6},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPADD),
+				code.Make(code.OpConstant, 2),
+				code.Make(code.OpConstant, 3),
+				code.Make(code.OPSUB),
+				code.Make(code.OpConstant, 4),
+				code.Make(code.OpConstant, 5),
+				code.Make(code.OPMUL),
+				code.Make(code.OPARRAY, 3),
+				code.Make(code.OPPOP),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
+
+func TestHashLiterals(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input:             "{}",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OPHASH, 0),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "{1 : 2, 3 : 4, 5 :6}",
+			expectedConstants: []interface{}{1, 2, 3, 4, 5, 6},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpConstant, 2),
+				code.Make(code.OpConstant, 3),
+				code.Make(code.OpConstant, 4),
+				code.Make(code.OpConstant, 5),
+				code.Make(code.OPHASH, 6),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input:             "{1: 2+3, 4 : 5*6}",
+			expectedConstants: []interface{}{1, 2, 3, 4, 5, 6},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpConstant, 2),
+				code.Make(code.OPADD),
+				code.Make(code.OpConstant, 3),
+				code.Make(code.OpConstant, 4),
+				code.Make(code.OpConstant, 5),
+				code.Make(code.OPMUL),
+				code.Make(code.OPHASH, 4),
+				code.Make(code.OPPOP),
+			},
+		},
+	}
+
 	runCompilerTest(t, tests)
 }
