@@ -5,6 +5,7 @@ import (
 	"laait/ast"
 	"laait/code"
 	"laait/object"
+	"sort"
 )
 
 type EmittedInstruction struct {
@@ -120,6 +121,28 @@ func (c *Compiler) Compile(node ast.Node) error {
 		default:
 			return fmt.Errorf("unknown operator %s", node.Operator)
 		}
+
+	case *ast.HashLiteral:
+		keys := []ast.Expression{}
+		for k := range node.Pairs {
+			keys = append(keys, k)
+		}
+		sort.Slice(keys, func(i, j int) bool {
+			return keys[i].String() < keys[j].String()
+		})
+
+		for _, k := range keys {
+			err := c.Compile(k)
+			if err != nil {
+				return err
+			}
+			err = c.Compile(node.Pairs[k])
+			if err != nil {
+				return err
+			}
+		}
+		c.emit(code.OPHASH, len(node.Pairs)*2)
+
 	case *ast.InfixExpression:
 		if node.Operator == "<" {
 			err := c.Compile(node.Right)
