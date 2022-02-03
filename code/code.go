@@ -57,6 +57,7 @@ const (
 	OPSETGLOBAL
 	OPARRAY
 	OPHASH
+	OPINDEX
 )
 
 type Definition struct {
@@ -85,6 +86,7 @@ var definitions = map[Opcode]*Definition{
 	OPSETGLOBAL:   {"OPSETGLOBAL", []int{2}},
 	OPARRAY:       {"OPARRAY", []int{2}},
 	OPHASH:        {"OPHASH", []int{2}},
+	OPINDEX:       {"OPINDEX", []int{}},
 }
 
 func Lookup(op byte) (*Definition, error) {
