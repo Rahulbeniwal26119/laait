@@ -72,6 +72,15 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.OPINDEX:
+			index := vm.pop()
+			left := vm.pop()
+
+			err := vm.excuteIndexExpression(left, index)
+			if err != nil {
+				return err
+			}
+
 		case code.OPPOP:
 			vm.pop()
 		case code.OPTRUE:
@@ -157,6 +166,42 @@ func (vm *VM) Run() error {
 	return nil
 }
 
+func (vm *VM) excuteIndexExpression(left, index object.Object) error {
+	switch {
+	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ:
+		return vm.executeArrayIndex(left, index)
+	case left.Type() == object.HASH_OBJ:
+		return vm.executeHashIndex(left, index)
+	default:
+		return fmt.Errorf("index operator not supported: %s", left.Type())
+	}
+}
+
+func (vm *VM) executeArrayIndex(array, index object.Object) error {
+	arrayObject := array.(*object.Array)
+	i := index.(*object.Integer).Value
+	max := int64(len(arrayObject.Elements) - 1)
+
+	if i < 0 || i > max {
+		return vm.push(Null)
+	}
+
+	return vm.push(arrayObject.Elements[i])
+}
+
+func (vm *VM) executeHashIndex(hash, index object.Object) error {
+	hashObject := hash.(*object.Hash)
+	key, ok := index.(object.Hashable)
+	if !ok {
+		return fmt.Errorf("Unable to hash array key %s", index.Type())
+	}
+	pair, ok := hashObject.Pairs[key.HashKey()]
+	if !ok {
+		return vm.push(Null)
+	}
+
+	return vm.push(pair.Value)
+}
 func (vm *VM) buildHash(startIndex, endIndex int) (object.Object, error) {
 	hashPair := make(map[object.HashKey]object.HashPair)
 
