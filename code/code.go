@@ -58,6 +58,9 @@ const (
 	OPARRAY
 	OPHASH
 	OPINDEX
+	OPCALL
+	OPRETURNVALUE
+	OPRETURN
 )
 
 type Definition struct {
@@ -87,6 +90,8 @@ var definitions = map[Opcode]*Definition{
 	OPARRAY:       {"OPARRAY", []int{2}},
 	OPHASH:        {"OPHASH", []int{2}},
 	OPINDEX:       {"OPINDEX", []int{}},
+	OPCALL:        {"OPCALL", []int{}},
+	OPRETURNVALUE: {"OPRETURNVALUE", []int{}},
 }
 
 func Lookup(op byte) (*Definition, error) {
