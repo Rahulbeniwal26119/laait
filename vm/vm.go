@@ -146,7 +146,7 @@ func (vm *VM) Run() error {
 
 			condition := vm.pop()
 			if !isTruthy(condition) {
-				ip = pos - 1
+				vm.currentFrame().ip = pos - 1
 			}
 
 		case code.OPSETGLOBAL:
