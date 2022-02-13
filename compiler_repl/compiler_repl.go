@@ -64,6 +64,7 @@ func Start(in io.Reader, out io.Writer, show_bytecode bool) {
 		}
 		//
 		stackTop := machine.LastPoppedStackElem()
+		fmt.Println(stackTop)
 		io.WriteString(out, stackTop.Inspect())
 		io.WriteString(out, "\n")
 		count++
