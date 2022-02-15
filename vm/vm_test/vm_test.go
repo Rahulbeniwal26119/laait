@@ -321,23 +321,37 @@ func TestCallingFunctionsWithoutArguments(t *testing.T) {
 
 }
 
-func TestFunctionsWithoutReturnValue(t *testing.T) {
+// func TestFunctionsWithoutReturnValue(t *testing.T) {
+// 	tests := []vmTestCase{
+// 		{
+// 			input: `
+// 			let noReturnValue = function() { }
+// 			noReturnValue();
+// 			`,
+// 			expected: vm.Null,
+// 		},
+// 		{
+// 			input: `
+// 			let noReturn = function() {};
+// 			let noReturnAgain = function() { noReturn() };
+// 			noReturn();
+// 			noReturnAgain();
+// 			`,
+// 			expected: vm.Null,
+// 		},
+// 	}
+// 	runVmTests(t, tests)
+// }
+
+func TestFirstClassFunctions(t *testing.T) {
 	tests := []vmTestCase{
 		{
 			input: `
-			let noReturnValue = function() { }
-			noReturnValue();
+			let returnOne = function() { 1; };
+			let returnOneReturner = function() { returnOne; };
+			returnOneReturner()();
 			`,
-			expected: vm.Null,
-		},
-		{
-			input: `
-			let noReturn = function() {};
-			let noReturnAgain = function() { noReturn() };
-			noReturn();
-			noReturnAgain();
-			`,
-			expected: vm.Null,
+			expected: 1,
 		},
 	}
 	runVmTests(t, tests)

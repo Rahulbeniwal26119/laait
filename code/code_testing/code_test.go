@@ -13,6 +13,7 @@ func TestMake(t *testing.T) {
 	}{
 		{code.OpConstant, []int{65534}, []byte{byte(code.OpConstant), 255, 254}},
 		{code.OPADD, []int{}, []byte{byte(code.OPADD)}},
+		{code.OPGETLOCAL, []int{255}, []byte{byte(code.OPGETLOCAL), 255}},
 	}
 
 	for _, tt := range tests {
@@ -33,17 +34,30 @@ func TestMake(t *testing.T) {
 }
 
 func TestInstructionString(t *testing.T) {
+	// instructions := []code.Instructions{
+	// 	code.Make(code.OpConstant, 1),
+	// 	code.Make(code.OpConstant, 2),
+	// 	code.Make(code.OpConstant, 65535),
+	// 	code.Make(code.OPADD),
+	// }
+
 	instructions := []code.Instructions{
-		code.Make(code.OpConstant, 1),
+		code.Make(code.OPADD),
+		code.Make(code.OPGETLOCAL, 1),
 		code.Make(code.OpConstant, 2),
 		code.Make(code.OpConstant, 65535),
-		code.Make(code.OPADD),
 	}
 
-	expected := `0000 OpConstant 1
+	// 	expected := `0000 OpConstant 1
+	// 0003 OpConstant 2
+	// 0006 OpConstant 65535
+	// 0009 OPADD
+	// `
+
+	expected := `0000 OPADD
+0001 OPGETLOCAL 1
 0003 OpConstant 2
 0006 OpConstant 65535
-0009 OPADD
 `
 
 	concatted := code.Instructions{}
@@ -64,6 +78,7 @@ func TestReadOperands(t *testing.T) {
 		bytesRead int
 	}{
 		{code.OpConstant, []int{65535}, 2},
+		{code.OPGETLOCAL, []int{255}, 1},
 	}
 
 	for _, tt := range tests {
