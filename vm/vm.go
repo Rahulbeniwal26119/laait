@@ -8,7 +8,7 @@ import (
 	"laait/object"
 )
 
-const MaxFrame = 1024
+const MaxFrames = 1024
 const StackSize = 2560
 const GlobalSize = 65536
 
@@ -31,7 +31,7 @@ func New(bytecode *compiler.Bytecode) *VM {
 	mainFn := &object.CompiledFunction{Instructions: bytecode.Instructions}
 	mainFrame := NewFrame(mainFn)
 
-	frames := make([]*Frame, MaxFrame)
+	frames := make([]*Frame, MaxFrames)
 	frames[0] = mainFrame
 
 	return &VM{
@@ -147,6 +147,35 @@ func (vm *VM) Run() error {
 			condition := vm.pop()
 			if !isTruthy(condition) {
 				vm.currentFrame().ip = pos - 1
+			}
+		case code.OPCALL:
+			fn, ok := vm.stack[vm.sp-1].(*object.CompiledFunction)
+			if !ok {
+				return fmt.Errorf("entity is not a function")
+			}
+
+			frame := NewFrame(fn)
+			vm.pushFrame(frame)
+
+		case code.OPRETURN:
+			fmt.Print("IN RETURN")
+			vm.popFrame()
+			vm.pop()
+
+			err := vm.push(Null)
+			if err != nil {
+				return err
+			}
+
+		case code.OPRETURNVALUE:
+			returnValue := vm.pop()
+
+			vm.popFrame()
+			vm.pop()
+
+			err := vm.push(returnValue)
+			if err != nil {
+				return err
 			}
 
 		case code.OPSETGLOBAL:

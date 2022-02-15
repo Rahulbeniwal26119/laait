@@ -297,3 +297,48 @@ func TestIndexExpressions(t *testing.T) {
 
 	runVmTests(t, tests)
 }
+
+func TestCallingFunctionsWithoutArguments(t *testing.T) {
+	tests := []vmTestCase{
+		{
+			input: `
+			let fivePlusTen = function() { 5 + 10; };
+			fivePlusTen();
+			let one = function() { 1; }
+			let two = function() { 2; }
+			one() + two()
+			let three = function() { one() + two()}
+			three()
+			function() { 
+				return 5;
+				return one() + two();
+			}()
+			`,
+			expected: 5,
+		},
+	}
+	runVmTests(t, tests)
+
+}
+
+func TestFunctionsWithoutReturnValue(t *testing.T) {
+	tests := []vmTestCase{
+		{
+			input: `
+			let noReturnValue = function() { }
+			noReturnValue();
+			`,
+			expected: vm.Null,
+		},
+		{
+			input: `
+			let noReturn = function() {};
+			let noReturnAgain = function() { noReturn() };
+			noReturn();
+			noReturnAgain();
+			`,
+			expected: vm.Null,
+		},
+	}
+	runVmTests(t, tests)
+}
