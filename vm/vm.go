@@ -158,7 +158,6 @@ func (vm *VM) Run() error {
 			vm.pushFrame(frame)
 
 		case code.OPRETURN:
-			fmt.Print("IN RETURN")
 			vm.popFrame()
 			vm.pop()
 

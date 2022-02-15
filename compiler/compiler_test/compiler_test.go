@@ -608,3 +608,22 @@ func TestFunctions(t *testing.T) {
 	}
 	runCompilerTest(t, tests)
 }
+
+func TestCompilerWithoutReturnValue(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `function() {}`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OPRETURN),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPPOP),
+			},
+		},
+	}
+
+	runCompilerTest(t, tests)
+}
