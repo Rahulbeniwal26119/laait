@@ -627,3 +627,74 @@ func TestCompilerWithoutReturnValue(t *testing.T) {
 
 	runCompilerTest(t, tests)
 }
+
+func TestLetStatementScopes(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `
+			let num  = 55;
+			function() { num };
+			`,
+			expectedConstants: []interface{}{
+				55,
+				[]code.Instructions{
+					code.Make(code.OPGETGLOBAL, 0),
+					code.Make(code.OPRETURNVALUE),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPSETGLOBAL, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input: `
+			function() {
+				let num = 55;
+				num
+			}`,
+			expectedConstants: []interface{}{
+				55,
+				[]code.Instructions{
+					code.Make(code.OpConstant, 0),
+					code.Make(code.OPSETLOCAL, 0),
+					code.Make(code.OPGETGLOBAL, 0),
+					code.Make(code.OPRETURN),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input: `
+					function() {
+						let a = 55;
+						let b = 77;
+						a + b
+					}`,
+			expectedConstants: []interface{}{
+				55,
+				77,
+				[]code.Instructions{
+					code.Make(code.OpConstant, 0),
+					code.Make(code.OPSETGLOBAL, 0),
+					code.Make(code.OpConstant, 1),
+					code.Make(code.OPSETLOCAL, 1),
+					code.Make(code.OPGETLOCAL, 0),
+					code.Make(code.OPGETLOCAL, 1),
+					code.Make(code.OPADD),
+					code.Make(code.OPRETURNVALUE),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 2),
+				code.Make(code.OPPOP),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
