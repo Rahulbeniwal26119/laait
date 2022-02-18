@@ -125,7 +125,7 @@ func TestResolveNestedLocal(t *testing.T) {
 func TestDefine(t *testing.T) {
 	expected := map[string]compiler.Symbol{
 		"a": {Name: "a", Scope: compiler.GlobalScope, Index: 0},
-		"b": {Name: "b", Scope: compiler.GlobalScope, Index: 0},
+		"b": {Name: "b", Scope: compiler.GlobalScope, Index: 1},
 		"c": {Name: "c", Scope: compiler.LocalScope, Index: 0},
 		"d": {Name: "d", Scope: compiler.LocalScope, Index: 1},
 		"e": {Name: "e", Scope: compiler.LocalScope, Index: 0},
@@ -141,7 +141,7 @@ func TestDefine(t *testing.T) {
 
 	b := global.Define("b")
 	if b != expected["b"] {
-		t.Errorf("expected b=+%v, got=%+v", expected["b"], b)
+		t.Errorf("expected b=%+v, got=%+v", expected["b"], b)
 	}
 
 	firstLocal := compiler.NewEnclosedSymbolTable(global)

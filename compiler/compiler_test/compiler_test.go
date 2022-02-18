@@ -660,8 +660,8 @@ func TestLetStatementScopes(t *testing.T) {
 				[]code.Instructions{
 					code.Make(code.OpConstant, 0),
 					code.Make(code.OPSETLOCAL, 0),
-					code.Make(code.OPGETGLOBAL, 0),
-					code.Make(code.OPRETURN),
+					code.Make(code.OPGETLOCAL, 0),
+					code.Make(code.OPRETURNVALUE),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -681,7 +681,7 @@ func TestLetStatementScopes(t *testing.T) {
 				77,
 				[]code.Instructions{
 					code.Make(code.OpConstant, 0),
-					code.Make(code.OPSETGLOBAL, 0),
+					code.Make(code.OPSETLOCAL, 0),
 					code.Make(code.OpConstant, 1),
 					code.Make(code.OPSETLOCAL, 1),
 					code.Make(code.OPGETLOCAL, 0),
@@ -698,3 +698,65 @@ func TestLetStatementScopes(t *testing.T) {
 	}
 	runCompilerTest(t, tests)
 }
+
+// func TestCompilerScopes(t *testing.T) {
+// 	c := compiler.New()
+// 	if c.scopeIndex != 0 {
+// 		t.Errorf("scopeIndex wrong. got=%d, want=%d", compiler.scopeIndex, 0)
+// 	}
+
+// 	globalSymbolTable := c.SymbolTable
+// 	c.emit(code.OPMUL)
+
+// 	c.enterScope()
+
+// 	if c.scopeIndex != 1 {
+// 		t.Errorf("scopeIndex wrong. got=%d, want=%d", c.scopeIndex, 1)
+// 	}
+
+// 	c.emit(scope.OPSUB)
+// 	if len(c.scopes[c.scopeIndex].instructions) != 1 {
+// 		t.Errof("instructions length wrong. got=%d", len(c.scopes[c.scopeIndex].instructions))
+// 	}
+
+// 	last := c.scopes[c.scopeIndex].LastInstructions
+// 	if last.Opcode != code.OPSUB {
+// 		t.Errof("lastInstruction.Opcode wrong. got=%d, want=%d", last.Opcode, code.OPSUB)
+// 	}
+
+// 	if c.symbolTable.Outer != globalSymbolTable {
+// 		t.Errorf("compiler didnot not enclode symbol table")
+// 	}
+
+// 	c.leaveScope()
+// 	if c.scopeIndex != 0 {
+// 		t.Errof("scopeIndex wrong. got=%d, want=%d", c.scopeIndex, 0)
+// 	}
+
+// 	if c.symbolTable != globalSymbolTable {
+// 		t.Errorf("compiler didnot restore global symbol table")
+// 	}
+
+// 	if c.symbolTable.Outer != nil {
+// 		t.Errorf("compiler modified global symbol table incorrectly.")
+// 	}
+
+// 	c.emit(code.OPADD)
+
+// 	if len(compiler.scopes[compiler.scopeIndex].instructions) != 2 {
+// 		t.Errorf("instructions length wrong. got=%d",
+// 			len(c.scopes[c.scopeIndex].instructions))
+// 	}
+// 	last = compiler.scopes[compiler.scopeIndex].lastInstruction
+// 	if last.Opcode != code.OPADD {
+// 		t.Errof("lastInstruction.Opcode wrong. got=%d, want=%d",
+// 			last.Opcode, code.OPADD)
+// 	}
+
+// 	previous := c.scopes[c.scopeIndex].previousInstruction
+// 	if previous.Opcode != code.OPMUL {
+// 		t.Errorf("previousInstruction.Opcode wrong. got=%d, want=%d",
+// 			previous.Opcode, code.OPMUL)
+// 	}
+
+// }
