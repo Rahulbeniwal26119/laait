@@ -135,9 +135,14 @@ func (c *Compiler) Compile(node ast.Node) error {
 			c.emit(code.OPRETURN)
 		}
 
+		numLocals := c.symbolTable.numDefinations
 		instructions := c.leaveScope()
 
-		compiledFn := &object.CompiledFunction{Instructions: instructions}
+		compiledFn := &object.CompiledFunction{
+			Instructions: instructions,
+			NumLocals:    numLocals,
+		}
+
 		c.emit(code.OpConstant, c.addConstant(compiledFn))
 
 	case *ast.IndexExpression:
