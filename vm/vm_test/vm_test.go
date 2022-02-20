@@ -356,3 +356,60 @@ func TestFirstClassFunctions(t *testing.T) {
 	}
 	runVmTests(t, tests)
 }
+
+func TestCallingFunctionsWithBindings(t *testing.T) {
+	tests := []vmTestCase{
+		{
+			input: `
+			let one = function() { let one = 1; one};
+			one();
+			`,
+			expected: 1,
+		},
+		{
+			input: `
+			let oneAndTwo = function() { let one = 1; let two = 2; one + two;};
+			oneAndTwo();
+			`,
+			expected: 3,
+		},
+		{
+			input: `
+			let oneAndTwo = function() { let one = 1; let two = 2; one + two;};
+			let threeAndFour = function() { 
+				let three = 3;
+				bind four = 4;
+				three + four;
+			}
+			oneAndTwo() + threeAndFour();
+			`,
+			expected: 10,
+		},
+		{
+			input: `
+			let firstFooBar = function() { let foobar = 50; foobar;}
+			let secondFooBar = function() { 
+				let foobar = 100;
+				foobar;
+				}
+			firstFooBar() + secondFooBar();`,
+			expected: 150,
+		},
+		{
+			input: `
+			let globalSeed = 50;
+			let minusOne = function() { 
+				let num = 1;
+				globalSeed - num;
+			};
+			let minusTwo = function(){
+				let num = 2;
+				globalSeed - num;
+			};
+			minusOne() + minusTwo();
+			`,
+			expected: 97,
+		},
+	}
+	runVmTests(t, tests)
+}
