@@ -760,3 +760,53 @@ func TestLetStatementScopes(t *testing.T) {
 // 	}
 
 // }
+
+func TestFunctionsCalls(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `
+			let oneArg = function(a) { };
+			oneArg(24);
+			`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OPRETURN),
+				},
+				24,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPSETGLOBAL, 0),
+				code.Make(code.OPGETGLOBAL, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OPCALL, 1),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input: `
+			let manyArgs = function(a, b, c){ };
+			manyArgs(24, 25, 26);
+			`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OPRETURN),
+				},
+				24,
+				25,
+				26,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPSETGLOBAL, 0),
+				code.Make(code.OPGETGLOBAL, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpConstant, 2),
+				code.Make(code.OpConstant, 3),
+				code.Make(code.OPCALL, 3),
+				code.Make(code.OPPOP),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}

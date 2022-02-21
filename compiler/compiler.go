@@ -171,7 +171,14 @@ func (c *Compiler) Compile(node ast.Node) error {
 			return err
 		}
 
-		c.emit(code.OPCALL)
+		for _, a := range node.Arguments {
+			err := c.Compile(a)
+			if err != nil {
+				return err
+			}
+		}
+
+		c.emit(code.OPCALL, len(node.Arguments))
 
 	case *ast.PrefixExpression:
 		err := c.Compile(node.Right)
