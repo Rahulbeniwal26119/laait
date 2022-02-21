@@ -94,7 +94,7 @@ var definitions = map[Opcode]*Definition{
 	OPARRAY:       {"OPARRAY", []int{2}},
 	OPHASH:        {"OPHASH", []int{2}},
 	OPINDEX:       {"OPINDEX", []int{}},
-	OPCALL:        {"OPCALL", []int{}},
+	OPCALL:        {"OPCALL", []int{1}}, // store the the count of arguments max is 256
 	OPRETURNVALUE: {"OPRETURNVALUE", []int{}},
 	OPGETLOCAL:    {"OPGETLOCAL", []int{1}},
 	OPSETLOCAL:    {"OPSETLOCAL", []int{1}},
