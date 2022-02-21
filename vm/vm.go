@@ -149,6 +149,7 @@ func (vm *VM) Run() error {
 				vm.currentFrame().ip = pos - 1
 			}
 		case code.OPCALL:
+			vm.currentFrame().ip += 1
 			fn, ok := vm.stack[vm.sp-1].(*object.CompiledFunction)
 			if !ok {
 				return fmt.Errorf("entity is not a function")
