@@ -425,24 +425,7 @@ func evalStringInfixExpression(
 }
 
 var builtins = map[string]*object.Builtin{
-	"len": &object.Builtin{
-		Fn: func(args ...object.Object) object.Object {
-			if len(args) != 1 {
-				return newError("wrong number of argument, got=%d, want=1",
-					len(args))
-			}
-
-			switch arg := args[0].(type) {
-			case *object.String:
-				return &object.Integer{Value: int64(len(arg.Value))}
-			case *object.Array:
-				return &object.Integer{Value: int64(len(arg.Elements))}
-			default:
-				return newError("argument to `len` not supported, got %s",
-					args[0].Type())
-			}
-		},
-	},
+	"len": object.GetBuiltinsByName("len"),
 	"first": &object.Builtin{
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
@@ -516,14 +499,7 @@ var builtins = map[string]*object.Builtin{
 			return &object.Array{Elements: newElements}
 		},
 	},
-	"puts": &object.Builtin{
-		Fn: func(args ...object.Object) object.Object {
-			for _, args := range args {
-				fmt.Println(args.Inspect())
-			}
-			return NULL
-		},
-	},
+	"puts": object.GetBuiltinsByName("puts"),
 }
 
 func evalHashLiteral(
