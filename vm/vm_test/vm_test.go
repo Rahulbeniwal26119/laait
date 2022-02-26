@@ -413,3 +413,24 @@ func TestCallingFunctionsWithBindings(t *testing.T) {
 	}
 	runVmTests(t, tests)
 }
+
+func TestCallingFunctionWithArgumentsAndBindings(t *testing.T) {
+	tests := []vmTestCase{
+		{
+			input: `
+			let identity = function(a) { a; };
+			identity(4);
+			`,
+			expected: 4,
+		},
+		{
+			input: `
+			let sum = function(a,b) { a + b; };
+			sum(1,2);
+			`,
+			expected: 3,
+		},
+	}
+
+	runVmTests(t, tests)
+}
