@@ -810,3 +810,44 @@ func TestFunctionsCalls(t *testing.T) {
 	}
 	runCompilerTest(t, tests)
 }
+
+func TestBuiltins(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `
+			len([]);
+			push([],1);
+			`,
+			expectedConstants: []interface{}{1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OPGETBUILTIN, 0),
+				code.Make(code.OPARRAY, 0),
+				code.Make(code.OPCALL, 1),
+				code.Make(code.OPCALL, 1),
+				code.Make(code.OPGETBUILTIN, 5),
+				code.Make(code.OPARRAY, 0),
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPCALL, 2),
+				code.Make(code.OPPOP),
+			},
+		},
+		{
+			input: `
+			function() { len([]) }`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OPGETBUILTIN, 0),
+					code.Make(code.OPARRAY, 0),
+					code.Make(code.OPCALL, 1),
+					code.Make(code.OPRETURNVALUE),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OPPOP),
+			},
+		},
+	}
+
+	runCompilerTest(t, tests)
+}
