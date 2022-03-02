@@ -33,6 +33,12 @@ type Bytecode struct {
 
 func New() *Compiler {
 
+	symbolTable := NewSymbolTable()
+
+	for i, v := range object.Builtins {
+		symbolTable.DefineBuiltin(i, v.Name)
+	}
+
 	mainScope := CompilationScope{
 		instructions:        code.Instructions{},
 		lastInstruction:     EmittedInstruction{},
@@ -41,7 +47,7 @@ func New() *Compiler {
 
 	return &Compiler{
 		constants:   []object.Object{},
-		symbolTable: NewSymbolTable(),
+		symbolTable: symbolTable,
 		scopes:      []CompilationScope{mainScope},
 		scopeIndex:  0,
 	}
@@ -282,10 +288,12 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 
 	case *ast.Identifier:
+		fmt.Println(node.Value)
 		symbol, ok := c.symbolTable.Resolve(node.Value)
 		if !ok {
 			return fmt.Errorf("undefined variable %s", node.Value)
 		}
+		c.loadSymbol(symbol)
 
 		if symbol.Scope == GlobalScope {
 			c.emit(code.OPGETGLOBAL, symbol.Index)
@@ -471,4 +479,15 @@ func (c *Compiler) lastInstructionIs(op code.Opcode) bool {
 	}
 
 	return c.scopes[c.scopeIndex].lastInstruction.Opcode == op
+}
+
+func (c *Compiler) loadSymbol(s Symbol) {
+	switch s.Scope {
+	case GlobalScope:
+		c.emit(code.OPGETGLOBAL, s.Index)
+	case LocalScope:
+		c.emit(code.OPGETLOCAL, s.Index)
+	case BuiltinScope:
+		c.emit(code.OPGETBUILTIN, s.Index)
+	}
 }
