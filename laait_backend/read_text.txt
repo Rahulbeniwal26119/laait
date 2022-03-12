@@ -1,0 +1,3 @@
+let fn = function(a,b) { a + b}
+fn(10,11)
+fn(11,11)
