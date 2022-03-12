@@ -10,18 +10,22 @@ import (
 )
 
 func main() {
-	printUser()
 	if len(os.Args) < 2 {
+		printUser()
 		evalutor()
+		fmt.Println("\nThanks to use LAAIT")
+	} else if len(os.Args) == 3 {
+		evaluator.Start_notebook("read_text.txt", "output_.txt")
 	} else {
+		printUser()
 		cmd := os.Args[1]
 		if cmd == "lexer" || cmd == "token" {
 			lexer()
 		} else if cmd == "parser" {
 			parser()
 		}
+		fmt.Println("\nThanks to use LAAIT")
 	}
-	fmt.Println("\nThanks to use LAAIT")
 }
 
 func printUser() {
