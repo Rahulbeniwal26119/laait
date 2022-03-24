@@ -5,6 +5,7 @@ import (
 	"laait/ast"
 	"laait/environment"
 	"laait/object"
+	"os"
 )
 
 var (
@@ -518,9 +519,20 @@ var builtins = map[string]*object.Builtin{
 	},
 	"puts": &object.Builtin{
 		Fn: func(args ...object.Object) object.Object {
+			// store the fmt data into a buffer
+			file_loc := "output_.txt"
+			file, err := os.OpenFile(file_loc, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err != nil {
+				fmt.Println("Failed to append to internal buffer")
+				fmt.Println(err)
+			}
+
 			for _, args := range args {
 				fmt.Println(args.Inspect())
+				file.WriteString(args.Inspect() + "\n")
 			}
+
+			file.Close()
 			return NULL
 		},
 	},

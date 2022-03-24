@@ -9,6 +9,7 @@ import (
 	"laait/evaluator"
 	"laait/lexer"
 	"laait/parser"
+	"os"
 	"strings"
 )
 
@@ -66,13 +67,14 @@ func Start_notebook(read_file string, out_file string) {
 	p := parser.New(l)
 
 	program := p.ParseProgram()
+	file, _ := os.OpenFile(out_file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if len(p.Errors()) != 0 {
-		ioutil.WriteFile(out_file, []byte(strings.Join(p.Errors(), "\n")), 0666)
+		file.WriteString(strings.Join(p.Errors(), "\n"))
 	}
 	evaluator.DefineMacros(program, macroEnv)
 	expanded := evaluator.ExpandMacros(program, macroEnv)
 	evaluated := evaluator.Eval(expanded, env)
 	if evaluated != nil {
-		ioutil.WriteFile(out_file, []byte(evaluated.Inspect()+"\n"), 0666)
+		file.WriteString(evaluated.Inspect() + "\n")
 	}
 }

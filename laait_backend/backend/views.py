@@ -32,7 +32,7 @@ def notebook_view(request):
         """
         Return take output of laait and return output json 
         """
-        system('main_interpreater evaluator notebook > output_.txt')
+        system('main_interpreter evaluator notebook > output_.txt')
         # if command is successful it create a output file in 
         output = []
         with open('output_.txt', 'r') as f:
