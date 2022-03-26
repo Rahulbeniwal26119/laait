@@ -54,7 +54,6 @@ func printParserErrors(out io.Writer, errors []string) {
 }
 
 func Start_notebook(read_file string, out_file string) {
-
 	data, err := ioutil.ReadFile(read_file)
 	if err != nil {
 		panic(err)
@@ -69,12 +68,17 @@ func Start_notebook(read_file string, out_file string) {
 	program := p.ParseProgram()
 	file, _ := os.OpenFile(out_file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if len(p.Errors()) != 0 {
-		file.WriteString(strings.Join(p.Errors(), "\n"))
+		fmt.Println(p.Errors())
 	}
 	evaluator.DefineMacros(program, macroEnv)
 	expanded := evaluator.ExpandMacros(program, macroEnv)
 	evaluated := evaluator.Eval(expanded, env)
 	if evaluated != nil {
 		file.WriteString(evaluated.Inspect() + "\n")
+		if len(p.Errors()) != 0 {
+			file.WriteString("** ======= PARSER ERRORS ======= **" + "\n")
+			file.WriteString(strings.Join(p.Errors(), "\n"))
+			file.WriteString("\n" + "======= ** =======" + "\n")
+		}
 	}
 }

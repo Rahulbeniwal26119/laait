@@ -1,5 +1,7 @@
-12
-15
-value of a is
-null
-null
+10
+10
+ERROR: identifier not found: functio
+** ======= PARSER ERRORS ======= **
+excepted next token to be :, got }
+no prefix parse function for } found
+======= ** =======
