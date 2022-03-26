@@ -1,3 +1,4 @@
+import os
 from backend.models import Notebook as NB 
 from rest_framework.decorators import api_view
 from backend.forms import NoteBookForm
@@ -32,16 +33,29 @@ def notebook_view(request):
         """
         Return take output of laait and return output json 
         """
-        system('main_interpreter evaluator notebook > output_.txt')
+        # append the location of excutable 
+        os.environ["PATH"]+=f":{os.path.join(os.path.abspath('.'))}"
+        
+        # check if output is exist then remove this 
+        output_file_abs_path = os.path.join(os.path.abspath('.') , "output_.txt")
+        
+        print(output_file_abs_path)
+        if os.path.exists(output_file_abs_path):
+            os.remove(output_file_abs_path)
+
+        system('laait_nb_interpreter evaluator notebook')
+
         # if command is successful it create a output file in 
         output = []
         with open('output_.txt', 'r') as f:
             output = f.readlines()
         if not output:
             output = 'No output. It is under developement'
+
         output = ''.join(output)
         NB.objects.create(input=input_code, output=output)
-        return log_and_respond(data = output, status = status.HTTP_200_OK,message="Interpreted Successfully")
+        return log_and_respond(data = output, 
+        status = status.HTTP_200_OK,message="Interpreted Successfully")
     except Exception as e:
         return log_and_respond(
             data = None,

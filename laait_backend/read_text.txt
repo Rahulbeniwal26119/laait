@@ -1,1 +1,3 @@
-let a=function() { 10 }; a();
+let a=function(){ 10 }; 
+puts(a());
+puts(b)
