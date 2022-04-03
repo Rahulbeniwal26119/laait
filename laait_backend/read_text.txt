@@ -1,2 +1,5 @@
-let a=function(){ 10 }; 
+
+let a = function() {
+  return "Hii" + "HELLO ";
+}
 puts(a());
