@@ -14,9 +14,7 @@ import simplejson as json
 def notebook_view(request):
     try:
         input_form_data = NoteBookForm(request.POST)
-        print(input_form_data)
         if not input_form_data.is_valid():
-            print(input_form_data.cleaned_data)
             return log_and_respond(
                 data = None,
                 message = "Input cannot be null",

@@ -5,3 +5,4 @@ ERROR: identifier not found: functio
 excepted next token to be :, got }
 no prefix parse function for } found
 ======= ** =======
+10

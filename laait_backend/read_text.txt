@@ -1,5 +1,2 @@
-
-let a = function() {
-  return "Hii" + "HELLO ";
-}
-puts(a());
+let a = {"a" : "10" };
+a["a"]
