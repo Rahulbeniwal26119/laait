@@ -4,25 +4,28 @@ Written in Go from scratch
 ## <i> Functionalities of Laait </i>
 #### Dynamic Type Language 
 <e> There is no need of defining Data type for variable explictly </e>
-<code><i>input : </i>
+<i>input : </i><br> 
+```javascript
 let a = 10;
 puts(a+1)
-<i> Output -> </i> 11 null
-</code>
+```
+<i> Output -> </i>
+<code> 11 null </code>
 
-<code><i>input: </i>
+<i>input: </i>
+```javascript
 let b = "String"
 puts(b + " is a string")
-</code>
+```
 <i> Output: </i>
-String is a string null
-
-<code> 
+<code>String is a string null </code>
+<i>input: </i>
+```javascript
 let c = [1,2,3]
 puts(c[1])
-
-2 null
-</code>
+```
+<i> Output: </i>
+<code>2 null</code>
 
 #### Variety of DataTypes 
 <li> String </li>
@@ -34,7 +37,7 @@ puts(c[1])
 
 #### Support Conditional Statements and Comparision Operators
 <i>input: </i>
-<code>
+```javascript
 puts(1 < 2)
 puts(1 > 2)
 puts(1 < 1)
@@ -44,12 +47,12 @@ puts(true == true)
 puts(false == true)
 puts(true != true)
 puts((1 < 2) == false)
-</code>
+```
 <i>Output: </i>
-true false false false true true false false false null
+<code>true false false false true true false false false null</code>
 
 <i>input: </i>
-<code>
+```javascript
 let a = 10;
 if ( a > 9) {
    if (a < 11){
@@ -59,28 +62,33 @@ if ( a > 9) {
 else{
    puts("a is less than 10");
 }
-</code>
+```
 <i>Output: </i>
-a is 10 null
+<code>a is 10 null</code>
 
 <i>input: </i>
-<code>1 == true</code>
+<u> false and true are seprate datatype </u>
+```javascript
+1 == true
+```
 <i>Output: </i>
-false null
+<code> false null </code>
 
 <i>input: </i>
-<code>
+```javascript
 puts(!true)
 puts(!false)
 puts(!!true)
 puts(!!false)</code>
+```
 <i>Output: </i>
-false true true false null
+<code>false true true false null</code>
 
 
-<b> Every statement is an expression mode </b>
+<b><u> Every statement is an expression
+</u></b>
 <i>input: </i>
-<code>
+```javascript
 let a = if (true) { 10 }
 let b = if (false) { 10 }
 let c = if (1) { 10 }
@@ -89,24 +97,25 @@ let e = if ( 1 > 2) { 10 } else { 20}
 let f = if ( 1 < 2) { 10 } else { 20}
 
 puts(a,b,c,d,e,f)
-</code>
+```
+
 <i>Output: </i>
-10 null 10 10 20 10 null
+<code>10 null 10 10 20 10 null </code>
 
 #### Support Functions 
 <i>input: </i>
-<code>
+```javascript
 let add = function(x,y) { 
           x + y;}
  add(5+5, add(5,5));
-</code>
+```
 <i>Output: </i>
-20 null
+<code>20 null </code>
 
 
 #### Support global and local variables
 <i>input: </i>
-<code>
+```javascript
 let global = 10;
 let testFunction = function(){
     puts(global);
@@ -115,13 +124,13 @@ let testFunction = function(){
 testFunction();
 puts(global)
 puts(c)
-</code>
+```
 <i>Output: </i>
-10 10 ERROR: identifier not found: c
+<code>10 10 ERROR: identifier not found: c </code>
 
 #### Supports Clousure 
 <i>input: </i>
-<code>
+```
 let newAdder = function(x){
                 function(y){
                         x + y;
@@ -129,17 +138,19 @@ let newAdder = function(x){
        };
 let addTwo = newAdder(2);       
 addTwo(2);
-</code>
+```
 <i>Output: </i>
-4
+<code>4 </code>
 
 #### Inbuilt functions
 <i> Array in LAAIT are like list in python </i>
-<u> last(arr) : Give the last element of list</u>
-<u> push(arr,10) : Return a new the array with appending the element at last</u>
-<u> first : Give the first element of list</u>
-<u> rest :  Give the rest element of list except first element</u>
-<code>
+-  last(arr) : Give the last element of list
+-  push(arr,10) : Return a new the array with appending the element at last
+-  first : Give the first element of list
+-  rest :  Give the rest element of list except first element
+
+<i>input: </i>
+```javascript
 let a = [1,2,3,4,5];
 puts(a[0], last(a));
 let s = "String"
@@ -147,17 +158,17 @@ puts(len(s))
 let c = push(a, 100)
 puts(c);
 rest(a)
-</code>
+```
 <i>Output: </i>
-1 5 6 [1,2,3,4,5,100] [2,3,4,5]
+<code>1 5 6 [1,2,3,4,5,100] [2,3,4,5] </code>
 
 #### Dictionary or Hash Table in LAAIT
 
 <i>input: </i>
-<code>
+```javascript
 let c = {"Name" : "Rahul", true: false, 1:20}
 puts(c["Name"], c[true], c[1])
-</code>
+```
 <i>Output: </i>
 Rahul false 20 null 
 
@@ -166,7 +177,7 @@ Rahul false 20 null
 
 <b> Implementing Fibonacci series </b>
 <i>input: </i>
-<code>
+```javascript
 let fib = function(a){
     if(a == 0){
         0;
@@ -183,21 +194,19 @@ let fib = function(a){
 }
 
 puts(fib(10));
-</code>
+```
 <i>Output: </i>
-55 null 
+<code>55 null</code> 
 
 <b> Implementing Factorial Program</b>
 <i>input: </i>
-<code>
-
+```javascript
 let fact = function(a){
     if ( a == 0) { 1}
     else { a * fact(a-1) }
 } 
 
 fact(5)
-
-</code>
+```
 <i>Output: </i>
-120 null
+<code>120 null </code>
