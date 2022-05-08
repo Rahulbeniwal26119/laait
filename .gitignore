@@ -1,2 +1,5 @@
 ./laait_backend/venv
-laait_backend/backend/__pycache__
+./laait_backend/backend/migrations/__pycache__/
+./laait_backend/laait_backend/__pycache__/
+
+
