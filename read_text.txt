@@ -1,4 +1,22 @@
 puts(10)
-let a=functio(){ 10 };
+
+let a=function(){ 10 };
+
 puts(a());
-puts(b)
+
+let fib = function(a){
+    if(a == 0){
+        0;
+    }
+    else{
+        if( a == 1 ) {
+            1;
+        }
+        else{
+            fib(a - 1) + fib(a -2);
+        }
+    }
+    puts(a);
+}
+
+puts(fib(10));

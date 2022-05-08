@@ -1,8 +1,1 @@
-10
-10
-ERROR: identifier not found: functio
-** ======= PARSER ERRORS ======= **
-excepted next token to be :, got }
-no prefix parse function for } found
-======= ** =======
-10
+null

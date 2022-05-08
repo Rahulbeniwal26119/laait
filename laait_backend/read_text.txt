@@ -1,2 +1,6 @@
-let a = {"a" : "10" };
-a["a"]
+let fact = function(a){
+    if ( a == 0) { 1}
+    else { a * fact(a-1) }
+} 
+
+fact(5)
