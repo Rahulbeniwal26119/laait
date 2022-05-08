@@ -1,4 +1,4 @@
-#LAAIT Interpreter
+# LAAIT Interpreter
 Written in Go from scratch
 
 ## <i> Functionalities of Laait </i>
