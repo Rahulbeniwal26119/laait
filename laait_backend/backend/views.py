@@ -11,7 +11,10 @@ from rest_framework import status
 from os import system 
 import simplejson as json 
 from backend.notebook_view_helper import \
-    prepare_data_for_history_view, get_current_dtm
+    prepare_data_for_history_view, get_current_dtm, \
+    check_if_python_code, execute_python_code,  print_output,\
+    create_notebook_object, check_if_python_code_interpreted
+import sys 
 import traceback
 
 # Create your views here.
@@ -27,46 +30,40 @@ def notebook_view(request):
                 status=  status.HTTP_400_BAD_REQUEST
             )
         input_code = request.POST.get("input")
+        # change system_output to output file 
 
-        with open('read_text.txt', 'w') as f:
-            f.write(input_code)
-        
-
-        """
-        Return take output of laait and return output json 
-        """
-        # append the location of excutable 
-        os.environ["PATH"]+=f":{os.path.join(os.path.abspath('.'))}"
-        
-        # check if output is exist then remove this 
         output_file_abs_path = os.path.join(os.path.abspath('.') , "output_.txt")
-        
-        if os.path.exists(output_file_abs_path):
-            os.remove(output_file_abs_path)
 
-        system('laait_nb_interpreter evaluator notebook')
+        # check if code is belong to python 
+        if check_if_python_code(input_code):
+            sys.stdout = open(output_file_abs_path, 'w')
+            output = execute_python_code(input_code)
+            sys.stdout.close()
+
+        else:
+            with open('read_text.txt', 'w') as f:
+                f.write(input_code)
+
+
+            """
+            Return take output of laait and return output json 
+            """
+            # append the location of excutable 
+            os.environ["PATH"]+=f":{os.path.join(os.path.abspath('.'))}"
+
+            if os.path.exists(output_file_abs_path):
+                os.remove(output_file_abs_path)
+
+            # check if output is exist then remove this 
+
+            system('laait_nb_interpreter evaluator notebook')
 
         # if command is successful it create a output file in 
-        response_code = ''
-        output = []
-        with open('output_.txt', 'r') as f:
-            output = f.readlines()
-        if not output:
-            output = 'No output. It is under developement'
-            response_code = 'DEVEL'
+        output, response_code = print_output(output_file_abs_path)
 
-        output = ''.join(output)
-        if output:
-            if check_error_message(output):
-                response_code = 'ERROR'
-            else:
-                response_code = 'SUCCESS'
-
-        NB.objects.create(
-            input=input_code, 
+        create_notebook_object(
+            input_code=input_code, 
             output=output, 
-            created_date=get_current_dtm(), 
-            update_date=get_current_dtm()
             )
 
         data = {
@@ -81,6 +78,7 @@ def notebook_view(request):
         )
 
     except Exception as e:
+        print(traceback.format_exc())
         return log_and_respond(
             data = None,
             message = str(e),
